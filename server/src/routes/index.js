@@ -1,0 +1,46 @@
+import express from 'express';
+import authRoutes from './authRoutes.js';
+import dashboardRoutes from './dashboardRoutes.js';
+import settingsRoutes from './settingsRoutes.js';
+import pagesRoutes from './pagesRoutes.js';
+import servicesRoutes from './servicesRoutes.js';
+import blogRoutes from './blogRoutes.js';
+import slidersRoutes from './slidersRoutes.js';
+import testimonialsRoutes from './testimonialsRoutes.js';
+import teamRoutes from './teamRoutes.js';
+import partnersRoutes from './partnersRoutes.js';
+import faqsRoutes from './faqsRoutes.js';
+import popupsRoutes from './popupsRoutes.js';
+import mediaRoutes from './mediaRoutes.js';
+import contactRoutes from './contactRoutes.js';
+import seoRoutes from './seoRoutes.js';
+import navigationRoutes from './navigationRoutes.js';
+import usersRoutes from './usersRoutes.js';
+import auditRoutes from './auditRoutes.js';
+import systemRoutes from './systemRoutes.js';
+import publicRoutes from './publicRoutes.js';
+
+const router = express.Router();
+
+router.use('/auth', authRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/settings', settingsRoutes);
+router.use('/pages', pagesRoutes);
+router.use('/services', servicesRoutes);
+router.use('/blogs', blogRoutes);
+router.use('/sliders', slidersRoutes);
+router.use('/testimonials', testimonialsRoutes);
+router.use('/team', teamRoutes);
+router.use('/partners', partnersRoutes);
+router.use('/faqs', faqsRoutes);
+router.use('/popups', popupsRoutes);
+router.use('/media', mediaRoutes);
+router.use('/contacts', contactRoutes);
+router.use('/seo', seoRoutes);
+router.use('/navigation', navigationRoutes);
+router.use('/users', usersRoutes);
+router.use('/audit', auditRoutes);
+router.use('/system', systemRoutes);
+router.use('/public', publicRoutes);
+
+export default router;

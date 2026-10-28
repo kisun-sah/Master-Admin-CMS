@@ -1,0 +1,23 @@
+{
+  "name": "master-admin-cms",
+  "version": "1.0.0",
+  "description": "Master Admin CMS — Universal MERN Architecture",
+  "scripts": {
+    "server": "npm start --prefix server",
+    "server:dev": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "seed": "npm run seed --prefix server",
+    "test:server": "npm test --prefix server",
+    "build:client": "npm run build --prefix client"
+  },
+  "keywords": [
+    "cms",
+    "mern",
+    "admin-panel",
+    "express",
+    "react",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "ISC"
+}

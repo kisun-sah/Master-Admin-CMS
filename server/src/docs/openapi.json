@@ -1,0 +1,187 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Master Admin CMS REST API",
+    "version": "1.0.0",
+    "description": "Universal MERN administration platform and headless content delivery API under /api/v1."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5000/api/v1",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "summary": "Authenticate user session",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "admin@mastercms.com" },
+                  "password": { "type": "string", "example": "Admin@123456" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Session established and cookie set." },
+          "401": { "description": "Invalid credentials." }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "summary": "Invalidate current session",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": { "description": "Session destroyed and cookie cleared." }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "summary": "Retrieve authenticated user profile and permissions",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": { "description": "Current user safe profile." },
+          "401": { "description": "Unauthorized." }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "summary": "Aggregate telemetry metrics and recent activity",
+        "tags": ["Dashboard"],
+        "responses": {
+          "200": { "description": "Real collection counts and activity logs." }
+        }
+      }
+    },
+    "/pages": {
+      "get": {
+        "summary": "List paginated pages",
+        "tags": ["Pages"],
+        "parameters": [
+          { "name": "page", "in": "query", "schema": { "type": "integer" } },
+          { "name": "limit", "in": "query", "schema": { "type": "integer" } },
+          { "name": "status", "in": "query", "schema": { "type": "string" } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Array of pages with pagination meta." }
+        }
+      },
+      "post": {
+        "summary": "Create a new page with structured blocks and SEO",
+        "tags": ["Pages"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": { "type": "string" },
+                  "slug": { "type": "string" },
+                  "status": { "type": "string", "enum": ["draft", "published", "archived"] }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Page created." },
+          "409": { "description": "Duplicate slug conflict." }
+        }
+      }
+    },
+    "/media/upload": {
+      "post": {
+        "summary": "Upload digital media (Images, PDF, and Videos up to 35 MB)",
+        "tags": ["Media"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Files uploaded and metadata indexed." },
+          "400": { "description": "Oversized file or unsupported MIME type." }
+        }
+      }
+    },
+    "/public/settings": {
+      "get": {
+        "summary": "Public safe site branding, colors, and contacts",
+        "tags": ["Public Headless API"],
+        "responses": {
+          "200": { "description": "Safe site configuration." }
+        }
+      }
+    },
+    "/public/pages/{slug}": {
+      "get": {
+        "summary": "Retrieve published page content and section blocks",
+        "tags": ["Public Headless API"],
+        "parameters": [
+          { "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Published page data." },
+          "404": { "description": "Page not found or unpublished." }
+        }
+      }
+    },
+    "/public/contact": {
+      "post": {
+        "summary": "Submit visitor contact form inquiry",
+        "tags": ["Public Headless API"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "message"],
+                "properties": {
+                  "name": { "type": "string" },
+                  "email": { "type": "string" },
+                  "message": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Message received." }
+        }
+      }
+    },
+    "/system/backup": {
+      "get": {
+        "summary": "Generate and download full database snapshot archive",
+        "tags": ["System Operations"],
+        "responses": {
+          "200": { "description": "JSON database export snapshot." }
+        }
+      }
+    }
+  }
+}
