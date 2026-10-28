@@ -1,20 +1,28 @@
 import React from 'react';
 
 export function StatusBadge({ status }) {
-  const normalized = (status || '').toLowerCase();
+  const normalized = (status || '').toLowerCase().replace(/-/g, '_');
 
   let badgeClass = 'badge-neutral';
-  let label = status || 'Unknown';
+  let label = (status || 'Unknown').replace(/_/g, ' ');
 
-  if (['published', 'active', 'success'].includes(normalized)) {
+  if (['published', 'active', 'success', 'selected'].includes(normalized)) {
     badgeClass = 'badge-success';
-  } else if (['draft', 'pending', 'in_progress'].includes(normalized)) {
+  } else if (['draft', 'pending', 'in_progress', 'shortlisted', 'interview'].includes(normalized)) {
     badgeClass = 'badge-warning';
-  } else if (['inactive', 'archived', 'spam', 'danger', 'suspended'].includes(normalized)) {
+  } else if (['inactive', 'archived', 'spam', 'danger', 'suspended', 'rejected'].includes(normalized)) {
     badgeClass = 'badge-danger';
-  } else if (['new', 'info'].includes(normalized)) {
+  } else if (['new', 'under_review', 'info'].includes(normalized)) {
     badgeClass = 'badge-info';
+  } else if (['closed', 'withdrawn'].includes(normalized)) {
+    badgeClass = 'badge-neutral';
   }
+
+  // Format capitalized words
+  const formattedLabel = label
+    .split(' ')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
 
   return (
     <span className={`badge ${badgeClass}`}>
@@ -26,7 +34,7 @@ export function StatusBadge({ status }) {
           backgroundColor: 'currentColor',
         }}
       />
-      {label.charAt(0).toUpperCase() + label.slice(1)}
+      {formattedLabel}
     </span>
   );
 }

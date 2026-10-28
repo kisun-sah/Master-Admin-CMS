@@ -15,6 +15,10 @@ import { TeamMember } from '../models/TeamMember.js';
 import { Partner } from '../models/Partner.js';
 import { FAQ } from '../models/FAQ.js';
 import { Popup } from '../models/Popup.js';
+import { JobVacancy } from '../models/JobVacancy.js';
+import { JobApplication } from '../models/JobApplication.js';
+import { GalleryAlbum } from '../models/GalleryAlbum.js';
+import { GalleryImage } from '../models/GalleryImage.js';
 
 export async function seedDatabase() {
   await connectDB();
@@ -68,6 +72,13 @@ export async function seedDatabase() {
         'contacts:read',
         'contacts:manage',
         'contacts:export',
+        'careers:read',
+        'careers:manage',
+        'jobapplications:read',
+        'jobapplications:manage',
+        'jobapplications:download_cv',
+        'gallery:read',
+        'gallery:manage',
         'seo:read',
         'seo:manage',
         'menus:read',
@@ -105,6 +116,11 @@ export async function seedDatabase() {
         'media:read',
         'media:create',
         'contacts:read',
+        'careers:read',
+        'careers:manage',
+        'jobapplications:read',
+        'gallery:read',
+        'gallery:manage',
       ],
       isSystem: false,
     },
@@ -112,7 +128,17 @@ export async function seedDatabase() {
       key: 'viewer',
       name: 'Auditor / Viewer',
       description: 'Read-only visibility for reporting and auditing.',
-      permissions: ['dashboard:read', 'pages:read', 'services:read', 'blogs:read', 'contacts:read', 'audit:read'],
+      permissions: [
+        'dashboard:read',
+        'pages:read',
+        'services:read',
+        'blogs:read',
+        'contacts:read',
+        'careers:read',
+        'jobapplications:read',
+        'gallery:read',
+        'audit:read',
+      ],
       isSystem: false,
     },
   ];
@@ -414,6 +440,172 @@ export async function seedDatabase() {
       frequency: 'once_per_session',
       status: 'active',
     });
+
+    // 10. Careers & Job Vacancies
+    const countVacancies = await JobVacancy.countDocuments();
+    if (countVacancies === 0) {
+      const v1 = await JobVacancy.create({
+        title: 'Senior Full-Stack MERN Architect',
+        slug: 'senior-full-stack-mern-architect',
+        department: 'Engineering',
+        employmentType: 'full-time',
+        location: 'San Francisco, CA',
+        workMode: 'hybrid',
+        openings: 2,
+        experience: '5+ years production Node.js & React experience',
+        education: 'B.S. or M.S. in Computer Science or equivalent',
+        salaryRange: '$140,000 - $175,000 / yr',
+        shortDescription: 'Lead architecture, REST API scaling, and modular React admin frontend delivery for our high-throughput CMS.',
+        description: 'We are seeking an experienced Senior Full-Stack Engineer to lead development of our mission-critical administrative control planes and distributed client APIs.',
+        responsibilities: [
+          'Architect and maintain high-performance Express and Mongoose data layers',
+          'Build accessible, responsive UI features in React using modern CSS design tokens',
+          'Enforce strict security guardrails, RBAC policies, and audit logging standards',
+          'Mentor junior developers and participate in code architecture reviews',
+        ],
+        requirements: [
+          'Proficiency with MongoDB indexing, connection pooling, and schema design',
+          'Deep expertise in modern React 18, Vite, and state management',
+          'Experience building robust RESTful APIs with cookie sessions and CSRF defenses',
+          'Familiarity with containerized deployments and automated integration tests',
+        ],
+        deadline: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000), // 60 days in future
+        status: 'published',
+        createdBy: adminUser._id,
+        updatedBy: adminUser._id,
+      });
+
+      const v2 = await JobVacancy.create({
+        title: 'DevOps & Cloud Security Engineer',
+        slug: 'devops-cloud-security-engineer',
+        department: 'Infrastructure',
+        employmentType: 'full-time',
+        location: 'Austin, TX',
+        workMode: 'remote',
+        openings: 1,
+        experience: '3+ years cloud infrastructure & CI/CD',
+        education: 'Bachelor degree in relevant STEM field',
+        salaryRange: '$130,000 - $160,000 / yr',
+        shortDescription: 'Maintain infrastructure security, zero-trust network policies, automated backups, and container pipelines.',
+        description: 'Join our infrastructure operations team to ensure high availability, encrypted file storage, automated testing pipelines, and 99.99% uptime.',
+        responsibilities: [
+          'Manage cloud server provisioning and zero-trust firewall configurations',
+          'Automate continuous integration pipelines and automated security scans',
+          'Monitor database health, memory telemetry, and disk storage utilization',
+        ],
+        requirements: [
+          'Experience managing Linux production environments and Docker containers',
+          'Strong understanding of web security, SSL/TLS, and isolated storage permissions',
+        ],
+        deadline: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+        status: 'published',
+        createdBy: adminUser._id,
+        updatedBy: adminUser._id,
+      });
+
+      // Sample Job Application
+      await JobApplication.create({
+        applicationRef: 'APP-20261028-SEED1',
+        vacancy: v1._id,
+        vacancyTitle: v1.title,
+        candidate: {
+          name: 'Sarah Chen',
+          email: 'sarah.chen@example.com',
+          phone: '+1 (555) 234-5678',
+          education: 'M.S. in Software Engineering, Stanford University',
+          currentOrganization: 'CloudScale Systems',
+          experienceYears: '6 years',
+          portfolioUrl: 'https://sarahchen.dev',
+          linkedinUrl: 'https://linkedin.com/in/sarahchen-dev',
+        },
+        coverLetter: 'I am excited to submit my candidacy for the Senior Full-Stack MERN Architect role. With over 6 years of experience architecting large-scale React and Node.js applications, I am confident in driving impactful outcomes.',
+        resume: {
+          filename: 'sample_resume.pdf',
+          originalName: 'Sarah_Chen_Resume.pdf',
+          storagePath: 'sample_resume.pdf',
+          mimeType: 'application/pdf',
+          size: 142850,
+        },
+        status: 'under_review',
+        statusHistory: [
+          {
+            status: 'new',
+            changedByName: 'Candidate Submission',
+            changedAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+            note: 'Application received via Careers Portal.',
+          },
+          {
+            status: 'under_review',
+            changedByName: 'Alex Carter',
+            changedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
+            note: 'Strong portfolio and relevant MERN background.',
+          },
+        ],
+        notes: [
+          {
+            text: 'Impressive GitHub contributions and experience with MongoDB connection pooling.',
+            authorName: 'Alex Carter',
+            createdAt: new Date(),
+          },
+        ],
+        privacyConsent: {
+          accepted: true,
+          consentTimestamp: new Date(),
+        },
+      });
+
+      v1.applicationCount = 1;
+      await v1.save();
+    }
+
+    // 11. Organization Gallery & Albums
+    const countAlbums = await GalleryAlbum.countDocuments();
+    if (countAlbums === 0) {
+      const album1 = await GalleryAlbum.create({
+        title: 'Global Tech Summit & Leadership Keynote',
+        slug: 'global-tech-summit-leadership-keynote',
+        description: 'Moments and keynote highlights from our annual international engineering conference.',
+        category: 'Events',
+        eventDate: new Date('2026-09-15'),
+        displayOrder: 1,
+        coverImage: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&auto=format&fit=crop&q=80',
+        status: 'published',
+        imageCount: 2,
+        createdBy: adminUser._id,
+        updatedBy: adminUser._id,
+      });
+
+      await GalleryImage.create([
+        {
+          title: 'Principal Architects Panel Discussion',
+          altText: 'Panel discussion at the Global Tech Summit',
+          caption: 'Discussing the future of distributed control planes and decoupled headless architectures.',
+          imageUrl: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800&auto=format&fit=crop&q=80',
+          storageKey: 'gallery_summit_1.jpg',
+          originalName: 'panel_discussion.jpg',
+          album: album1._id,
+          albumTitle: album1.title,
+          category: 'Events',
+          displayOrder: 1,
+          status: 'published',
+          uploadedBy: adminUser._id,
+        },
+        {
+          title: 'Engineering Innovation Showcase',
+          altText: 'Exhibition hall showing enterprise solutions',
+          caption: 'Live demonstration of high-throughput content management systems.',
+          imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800&auto=format&fit=crop&q=80',
+          storageKey: 'gallery_summit_2.jpg',
+          originalName: 'innovation_showcase.jpg',
+          album: album1._id,
+          albumTitle: album1.title,
+          category: 'Events',
+          displayOrder: 2,
+          status: 'published',
+          uploadedBy: adminUser._id,
+        },
+      ]);
+    }
 
     console.log('[Seeder] Initial starter content seeded successfully.');
   }

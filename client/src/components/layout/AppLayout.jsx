@@ -20,9 +20,13 @@ import { SEOView } from '../../features/seo/SEOView.jsx';
 import { UsersView } from '../../features/users/UsersView.jsx';
 import { AuditView } from '../../features/audit/AuditView.jsx';
 import { SystemView } from '../../features/system/SystemView.jsx';
+import { CareersView } from '../../features/careers/CareersView.jsx';
+import { JobApplicationsView } from '../../features/jobapplications/JobApplicationsView.jsx';
+import { GalleryView } from '../../features/gallery/GalleryView.jsx';
 
 export function AppLayout() {
   const [currentRoute, setCurrentRoute] = useState('dashboard');
+  const [selectedVacancyForApplications, setSelectedVacancyForApplications] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -36,6 +40,23 @@ export function AppLayout() {
         return <ServicesView />;
       case 'blogs':
         return <BlogsView />;
+      case 'gallery':
+        return <GalleryView />;
+      case 'careers':
+        return (
+          <CareersView
+            onNavigateToApplications={(vacId) => {
+              setSelectedVacancyForApplications(vacId);
+              setCurrentRoute('jobapplications');
+            }}
+          />
+        );
+      case 'jobapplications':
+        return (
+          <JobApplicationsView
+            initialVacancyId={selectedVacancyForApplications}
+          />
+        );
       case 'media':
         return <MediaView />;
       case 'sliders':

@@ -12,6 +12,14 @@ import { NavigationMenu } from '../models/NavigationMenu.js';
 import { getActivePublicPopup } from '../controllers/popupsController.js';
 import { submitContact } from '../controllers/contactController.js';
 import { generateSitemapXml } from '../controllers/seoController.js';
+import { getPublicCareers, getPublicCareerBySlug } from '../controllers/careerController.js';
+import { submitApplication } from '../controllers/jobApplicationController.js';
+import {
+  getPublicGallery,
+  getPublicAlbumBySlug,
+  getPublicGalleryImages,
+} from '../controllers/galleryController.js';
+import { uploadResume } from '../middleware/privateUpload.js';
 import { publicApiRateLimiter } from '../middleware/rateLimiter.js';
 
 const router = express.Router();
@@ -131,6 +139,16 @@ router.get('/popups/active', getActivePublicPopup);
 
 // Contact Submission
 router.post('/contact', submitContact);
+
+// Careers & Job Applications (Public)
+router.get('/careers', getPublicCareers);
+router.get('/careers/:slug', getPublicCareerBySlug);
+router.post('/careers/:slug/applications', uploadResume.single('resume'), submitApplication);
+
+// Organization Gallery (Public)
+router.get('/gallery', getPublicGallery);
+router.get('/gallery/:slug', getPublicAlbumBySlug);
+router.get('/gallery-images', getPublicGalleryImages);
 
 // Sitemap
 router.get('/sitemap.xml', generateSitemapXml);

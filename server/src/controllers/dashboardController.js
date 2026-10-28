@@ -6,6 +6,10 @@ import { Slider } from '../models/Slider.js';
 import { MediaAsset } from '../models/MediaAsset.js';
 import { Testimonial } from '../models/Testimonial.js';
 import { AuditEvent } from '../models/AuditEvent.js';
+import { JobVacancy } from '../models/JobVacancy.js';
+import { JobApplication } from '../models/JobApplication.js';
+import { GalleryAlbum } from '../models/GalleryAlbum.js';
+import { GalleryImage } from '../models/GalleryImage.js';
 
 export async function getDashboardStats(req, res, next) {
   try {
@@ -22,6 +26,12 @@ export async function getDashboardStats(req, res, next) {
       activeSliders,
       totalMedia,
       totalTestimonials,
+      totalVacancies,
+      openVacancies,
+      totalApplications,
+      newApplications,
+      totalAlbums,
+      totalGalleryImages,
       recentPages,
       recentBlogs,
       recentAuditLogs,
@@ -38,6 +48,12 @@ export async function getDashboardStats(req, res, next) {
       Slider.countDocuments({ status: 'active' }),
       MediaAsset.countDocuments(),
       Testimonial.countDocuments({ status: 'published' }),
+      JobVacancy.countDocuments({ isDeleted: false }),
+      JobVacancy.countDocuments({ status: 'published', isDeleted: false }),
+      JobApplication.countDocuments(),
+      JobApplication.countDocuments({ status: 'new' }),
+      GalleryAlbum.countDocuments({ isDeleted: false }),
+      GalleryImage.countDocuments({ isDeleted: false }),
       Page.find({ isDeleted: false }).sort({ updatedAt: -1 }).limit(5).select('title slug status updatedAt'),
       BlogPost.find({ isDeleted: false }).sort({ updatedAt: -1 }).limit(5).select('title slug status updatedAt category'),
       AuditEvent.find().sort({ createdAt: -1 }).limit(8),
@@ -62,6 +78,9 @@ export async function getDashboardStats(req, res, next) {
           sliders: { active: activeSliders },
           media: { total: totalMedia },
           testimonials: { total: totalTestimonials },
+          careers: { total: totalVacancies, open: openVacancies },
+          applications: { total: totalApplications, new: newApplications },
+          gallery: { albums: totalAlbums, images: totalGalleryImages },
           recentActivityEvents: recentActivityCount,
         },
         recentContent: {

@@ -35,6 +35,9 @@ build/
 # Uploads & Media
 server/uploads/*
 !server/uploads/.gitkeep
+private_uploads/*
+*/private_uploads/*
+!**/private_uploads/**/.gitkeep
 
 # System & IDE files
 .DS_Store

@@ -21,5 +21,8 @@ Status: Planned | In Progress | Implemented | Tested | Deferred
 | **Popups** | Title, banner/image, CTA destination, frequency, status | `/api/v1/public/popups/active`| `popups:read`, `popups:manage` | Implemented |
 | **Contact Submissions**| Inbox list, submission details, status (New, Replied, Spam), notes, CSV export| Public submission API | `contacts:read`, `contacts:manage` | Implemented |
 | **SEO & Redirects** | Shared SEO meta, canonical, sitemap.xml generator, 301/302 redirects engine | Public redirects & sitemap | `seo:read`, `seo:manage` | Implemented |
+| **Careers & Vacancies** | Job vacancies CRUD, deadline enforcement, work mode, salary, requirements, SEO | `/api/v1/public/careers`, `/api/v1/public/careers/:slug` | `careers:read`, `careers:manage` | Implemented |
+| **Job Applications** | Candidate applications inbox, review workflows, recruiter notes, timeline, CSV export, private 35MB CV storage & secure downloads | `POST /api/v1/public/careers/:slug/applications` (public submission) | `jobapplications:read`, `jobapplications:manage`, `jobapplications:download_cv` | Implemented |
+| **Organization Gallery** | Gallery albums & image management, batch uploads, ordering, categories, lightbox metadata | `/api/v1/public/gallery`, `/api/v1/public/gallery/:slug`, `/api/v1/public/gallery-images` | `gallery:read`, `gallery:manage` | Implemented |
 | **Audit Logs** | Immutable event logs, actor, timestamp, action, resource ID, IP | None (private) | `audit:read` | Implemented |
 | **System & Health** | DB connection pool status, disk/memory telemetry, uptime | `/api/v1/health` | `system:read` | Implemented |

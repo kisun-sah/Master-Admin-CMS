@@ -13,6 +13,8 @@ import {
   Calendar,
   ArrowUpRight,
   TrendingUp,
+  GraduationCap,
+  Camera,
 } from 'lucide-react';
 import { StatusBadge } from '../../components/ui/StatusBadge.jsx';
 
@@ -256,6 +258,92 @@ export function DashboardView({ onNavigate }) {
           </div>
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
             MongoDB replica pool active (18ms latency)
+          </div>
+        </div>
+
+        {/* Careers & Applications KPI */}
+        <div
+          className="card"
+          style={{ padding: '20px', cursor: 'pointer' }}
+          onClick={() => onNavigate('careers')}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>
+              Open Careers & Talent
+            </span>
+            <div
+              style={{
+                background: '#F3E8FF',
+                color: '#9333EA',
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              <GraduationCap size={18} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', margin: '10px 0 6px' }}>
+            <div style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-main)' }}>
+              {summary.careers?.open || 0}
+            </div>
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                color: 'var(--info)',
+                background: 'var(--info-bg)',
+                padding: '2px 6px',
+                borderRadius: 'var(--radius-full)',
+              }}
+            >
+              {summary.applications?.total || 0} Applicants
+            </span>
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            {summary.careers?.total || 0} total vacancies registered
+          </div>
+        </div>
+
+        {/* Organization Gallery KPI */}
+        <div
+          className="card"
+          style={{ padding: '20px', cursor: 'pointer' }}
+          onClick={() => onNavigate('gallery')}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-muted)' }}>
+              Organization Gallery
+            </span>
+            <div
+              style={{
+                background: '#ECFEFF',
+                color: '#0891B2',
+                padding: '8px',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
+              <Camera size={18} />
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', margin: '10px 0 6px' }}>
+            <div style={{ fontSize: '30px', fontWeight: 700, color: 'var(--text-main)' }}>
+              {summary.gallery?.albums || 0}
+            </div>
+            <span
+              style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#0891B2',
+                background: '#CFFAFE',
+                padding: '2px 6px',
+                borderRadius: 'var(--radius-full)',
+              }}
+            >
+              {summary.gallery?.images || 0} Photos
+            </span>
+          </div>
+          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+            Published albums and event galleries
           </div>
         </div>
       </div>

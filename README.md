@@ -171,6 +171,9 @@ Sample test output:
 | **Partners / Clients**| Partner brand logos, website URLs, alt text, and display order. |
 | **FAQs** | Categorized accordion Q&A pairs with custom display sequence. |
 | **Popups** | Marketing and lead-generation announcement modals with frequency cooldowns. |
+| **Careers & Vacancies**| Vacancy CRUD, deadline enforcement, work modes (On-site, Hybrid, Remote), openings, applicant metrics, and SEO. |
+| **Job Applications** | Candidate application review, status pipeline, internal recruiter notes, timeline history, and secure access-controlled 35 MB CV downloads. |
+| **Organization Gallery**| Photo albums & image management, batch uploads, ordering, categories, and public image feeds. |
 | **Contact Submissions**| Message inbox, status management (`new`, `in_progress`, `replied`, `spam`, `archived`), staff notes, and CSV export. |
 | **Site Settings** | Branding colors, logo and favicon upload, typography font selector, contact info, and footer text. |
 | **Navigation Menus** | Primary header navbar and footer column link builder with ordering and target window options. |
@@ -196,5 +199,11 @@ External consumer frontends (React, Next.js, Vue, or static HTML) consume public
 - `GET /api/v1/public/partners` — Partner logos and URLs.
 - `GET /api/v1/public/faqs` — Published FAQs.
 - `GET /api/v1/public/popups/active` — Currently scheduled marketing popups.
+- `GET /api/v1/public/careers` — Published, non-expired job vacancies.
+- `GET /api/v1/public/careers/:slug` — Published job vacancy details, responsibilities, and requirements.
+- `POST /api/v1/public/careers/:slug/applications` — Candidate job application submission with private CV upload (multipart/form-data).
+- `GET /api/v1/public/gallery` — Published organization gallery albums.
+- `GET /api/v1/public/gallery/:slug` — Published album details and photo items.
+- `GET /api/v1/public/gallery-images` — Published organization gallery photos.
 - `POST /api/v1/public/contact` — Secure visitor message submission endpoint.
 - `GET /api/v1/public/sitemap.xml` — Dynamically generated XML sitemap for SEO crawlers.

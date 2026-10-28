@@ -21,6 +21,9 @@ import {
   ChevronLeft,
   ChevronRight,
   LogOut,
+  GraduationCap,
+  FileCheck,
+  Camera,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
@@ -54,11 +57,19 @@ export function Sidebar({ currentRoute, onNavigate, collapsed, onToggleCollapse 
         { key: 'pages', label: 'Pages & Blocks', icon: FileText, perm: 'pages:read' },
         { key: 'services', label: 'Services', icon: Briefcase, perm: 'services:read' },
         { key: 'blogs', label: 'Blog & Articles', icon: BookOpen, perm: 'blogs:read' },
+        { key: 'gallery', label: 'Organization Gallery', icon: Camera, perm: 'gallery:read' },
         { key: 'media', label: 'Media Library', icon: ImageIcon, perm: 'media:read' },
         { key: 'testimonials', label: 'Testimonials', icon: MessageSquareQuote, perm: 'testimonials:read' },
         { key: 'team', label: 'Team Members', icon: Users, perm: 'team:read' },
         { key: 'partners', label: 'Partners / Clients', icon: Building, perm: 'partners:read' },
         { key: 'faqs', label: 'FAQs', icon: HelpCircle, perm: 'faqs:read' },
+      ],
+    },
+    {
+      title: 'Careers & Talent',
+      items: [
+        { key: 'careers', label: 'Job Vacancies', icon: GraduationCap, perm: 'careers:read' },
+        { key: 'jobapplications', label: 'Job Applications', icon: FileCheck, perm: 'jobapplications:read' },
       ],
     },
     {
