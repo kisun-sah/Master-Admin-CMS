@@ -1,9 +1,11 @@
 import React from 'react';
 import { Search, ExternalLink, Shield } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
 
 export function Header({ currentRoute, onOpenProfile }) {
   const { user } = useAuth();
+  const { settings } = useSettings();
 
   const routeNames = {
     dashboard: 'Dashboard Overview',
@@ -29,7 +31,9 @@ export function Header({ currentRoute, onOpenProfile }) {
   return (
     <header className="topbar">
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>Workspace</span>
+        <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+          {settings?.siteName || 'Workspace'}
+        </span>
         <span style={{ color: 'var(--text-subtle)' }}>/</span>
         <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
           {routeNames[currentRoute] || 'Overview'}

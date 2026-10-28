@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
 import { Lock, Mail, ShieldAlert, ArrowRight, Eye, EyeOff } from 'lucide-react';
 
 export function LoginView() {
   const { login } = useAuth();
+  const { settings } = useSettings();
+  const [logoFailed, setLogoFailed] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -52,29 +55,45 @@ export function LoginView() {
         }}
       >
         <div style={{ padding: '36px 32px 24px', textAlign: 'center' }}>
-          <div
-            style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: 'var(--radius-md)',
-              background: 'var(--primary)',
-              color: '#FFFFFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              margin: '0 auto 16px',
-              fontSize: '22px',
-              fontWeight: 800,
-              boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)',
-            }}
-          >
-            M
-          </div>
+          {settings?.logo && !logoFailed ? (
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+              <img
+                src={settings.logo}
+                alt={settings?.siteName || 'Logo'}
+                style={{
+                  maxHeight: '52px',
+                  maxWidth: '220px',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+                onError={() => setLogoFailed(true)}
+              />
+            </div>
+          ) : (
+            <div
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: 'var(--radius-md)',
+                background: 'var(--primary)',
+                color: '#FFFFFF',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+                fontSize: '22px',
+                fontWeight: 800,
+                boxShadow: '0 4px 12px rgba(79, 70, 229, 0.35)',
+              }}
+            >
+              {settings?.siteName ? settings.siteName.trim().charAt(0).toUpperCase() : 'M'}
+            </div>
+          )}
           <h1 style={{ fontSize: '22px', fontWeight: 700, color: 'var(--text-main)' }}>
-            Master Admin CMS
+            {settings?.siteName ? `${settings.siteName} Admin` : 'Master Admin CMS'}
           </h1>
           <p style={{ fontSize: '13.5px', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Sign in to manage web content, media, and site operations
+            {settings?.siteTagline || 'Sign in to manage web content, media, and site operations'}
           </p>
         </div>
 

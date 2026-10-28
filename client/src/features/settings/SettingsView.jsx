@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../../lib/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
 import { MediaPickerModal } from '../../components/common/MediaPickerModal.jsx';
 import { Globe, Palette, Mail, Share2, Shield, Save, Check } from 'lucide-react';
 
 export function SettingsView() {
   const { addToast } = useAuth();
-  const [loading, setLoading] = useState(true);
+  const { settings: globalSettings, saveSettings, previewTheme, resetTheme } = useSettings();
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('identity'); // 'identity' | 'brand' | 'contact' | 'social' | 'seo'
 
@@ -42,47 +42,54 @@ export function SettingsView() {
 
   const [mediaPickerTarget, setMediaPickerTarget] = useState(null);
 
-  const fetchSettings = async () => {
-    try {
-      setLoading(true);
-      const res = await api.get('/settings');
-      if (res.success && res.data) {
-        setSettings((prev) => ({
-          ...prev,
-          ...res.data,
-          socialLinks: { ...prev.socialLinks, ...(res.data.socialLinks || {}) },
-          seoDefaults: { ...prev.seoDefaults, ...(res.data.seoDefaults || {}) },
-        }));
-      }
-    } catch (err) {
-      addToast(err.message, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // Sync state with globalSettings when loaded
   useEffect(() => {
-    fetchSettings();
-  }, []);
+    if (globalSettings) {
+      setSettings((prev) => ({
+        ...prev,
+        ...globalSettings,
+        socialLinks: { ...(prev.socialLinks || {}), ...(globalSettings.socialLinks || {}) },
+        seoDefaults: { ...(prev.seoDefaults || {}), ...(globalSettings.seoDefaults || {}) },
+      }));
+    }
+  }, [globalSettings]);
+
+  // Reset theme on unmount if user leaves without saving
+  useEffect(() => {
+    return () => {
+      resetTheme();
+    };
+  }, [resetTheme]);
+
+  const updateField = (field, value) => {
+    setSettings((prev) => {
+      const updated = { ...prev, [field]: value };
+      if (['primaryColor', 'secondaryColor', 'fontFamily', 'favicon', 'logo', 'siteName'].includes(field)) {
+        previewTheme(updated);
+      }
+      return updated;
+    });
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
     try {
       setSaving(true);
-      const res = await api.put('/settings', settings);
-      if (res.success) {
-        addToast('Site settings and branding saved successfully!', 'success');
-      }
+      await saveSettings(settings);
+      addToast('Site settings, brand colors, logo, and fonts updated across Admin Panel!', 'success');
     } catch (err) {
-      addToast(err.message, 'error');
+      addToast(err.message || 'Failed to save settings', 'error');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return <div style={{ padding: '40px', textAlign: 'center' }}>Loading site configuration...</div>;
-  }
+  const handleMediaSelect = (url) => {
+    if (mediaPickerTarget) {
+      updateField(mediaPickerTarget, url);
+    }
+    setMediaPickerTarget(null);
+  };
 
   return (
     <div>
@@ -103,7 +110,7 @@ export function SettingsView() {
             Website Identity & Global Settings
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
-            Configure branding, color palette tokens, typography, contact points, and SEO defaults.
+            Configure branding, color palette tokens, typography, contact points, and SEO defaults. Changes apply dynamically across the Admin Panel.
           </p>
         </div>
 
@@ -159,7 +166,7 @@ export function SettingsView() {
                       className="form-control"
                       required
                       value={settings.siteName}
-                      onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                      onChange={(e) => updateField('siteName', e.target.value)}
                     />
                   </div>
 
@@ -169,21 +176,22 @@ export function SettingsView() {
                       type="text"
                       className="form-control"
                       value={settings.siteTagline}
-                      onChange={(e) => setSettings({ ...settings, siteTagline: e.target.value })}
+                      onChange={(e) => updateField('siteTagline', e.target.value)}
                     />
                   </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                  {/* Primary Brand Logo */}
                   <div className="form-group">
                     <label className="form-label">Primary Brand Logo URL</label>
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="https://..."
+                        placeholder="https://... or /uploads/..."
                         value={settings.logo}
-                        onChange={(e) => setSettings({ ...settings, logo: e.target.value })}
+                        onChange={(e) => updateField('logo', e.target.value)}
                       />
                       <button
                         type="button"
@@ -193,17 +201,44 @@ export function SettingsView() {
                         Browse
                       </button>
                     </div>
+                    {settings.logo && (
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img
+                          src={settings.logo}
+                          alt="Logo Preview"
+                          style={{
+                            maxHeight: '34px',
+                            maxWidth: '120px',
+                            objectFit: 'contain',
+                            background: '#F1F5F9',
+                            padding: '3px 6px',
+                            borderRadius: '4px',
+                            border: '1px solid var(--border)',
+                          }}
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                          onClick={() => updateField('logo', '')}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
                   </div>
 
+                  {/* Dark-mode Logo */}
                   <div className="form-group">
                     <label className="form-label">Dark-mode Logo URL</label>
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="https://..."
+                        placeholder="https://... or /uploads/..."
                         value={settings.darkLogo}
-                        onChange={(e) => setSettings({ ...settings, darkLogo: e.target.value })}
+                        onChange={(e) => updateField('darkLogo', e.target.value)}
                       />
                       <button
                         type="button"
@@ -213,17 +248,44 @@ export function SettingsView() {
                         Browse
                       </button>
                     </div>
+                    {settings.darkLogo && (
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img
+                          src={settings.darkLogo}
+                          alt="Dark Logo Preview"
+                          style={{
+                            maxHeight: '34px',
+                            maxWidth: '120px',
+                            objectFit: 'contain',
+                            background: '#1E293B',
+                            padding: '3px 6px',
+                            borderRadius: '4px',
+                            border: '1px solid var(--border)',
+                          }}
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                          onClick={() => updateField('darkLogo', '')}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
                   </div>
 
+                  {/* Favicon */}
                   <div className="form-group">
                     <label className="form-label">Favicon Icon URL</label>
                     <div style={{ display: 'flex', gap: '6px' }}>
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="https://..."
+                        placeholder="https://... or /uploads/..."
                         value={settings.favicon}
-                        onChange={(e) => setSettings({ ...settings, favicon: e.target.value })}
+                        onChange={(e) => updateField('favicon', e.target.value)}
                       />
                       <button
                         type="button"
@@ -233,6 +295,32 @@ export function SettingsView() {
                         Browse
                       </button>
                     </div>
+                    {settings.favicon && (
+                      <div style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <img
+                          src={settings.favicon}
+                          alt="Favicon Preview"
+                          style={{
+                            width: '28px',
+                            height: '28px',
+                            objectFit: 'contain',
+                            background: '#F1F5F9',
+                            padding: '2px',
+                            borderRadius: '4px',
+                            border: '1px solid var(--border)',
+                          }}
+                          onError={(e) => (e.currentTarget.style.display = 'none')}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          style={{ fontSize: '11px', padding: '2px 8px' }}
+                          onClick={() => updateField('favicon', '')}
+                        >
+                          Clear
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -242,9 +330,7 @@ export function SettingsView() {
                     rows={2}
                     className="form-control"
                     value={settings.footerDescription}
-                    onChange={(e) =>
-                      setSettings({ ...settings, footerDescription: e.target.value })
-                    }
+                    onChange={(e) => updateField('footerDescription', e.target.value)}
                   />
                 </div>
 
@@ -254,7 +340,7 @@ export function SettingsView() {
                     type="text"
                     className="form-control"
                     value={settings.copyrightText}
-                    onChange={(e) => setSettings({ ...settings, copyrightText: e.target.value })}
+                    onChange={(e) => updateField('copyrightText', e.target.value)}
                   />
                 </div>
               </div>
@@ -263,6 +349,50 @@ export function SettingsView() {
             {/* Brand & Palette Tab */}
             {activeTab === 'brand' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div
+                  style={{
+                    padding: '16px',
+                    borderRadius: 'var(--radius-md)',
+                    background: 'var(--primary-light)',
+                    border: '1px solid var(--border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap',
+                    gap: '12px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
+                      Live Admin Theme Preview
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                      Color and typography adjustments instantly reflect across the admin sidebar, buttons, and navigation.
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      style={{ pointerEvents: 'none' }}
+                    >
+                      Primary Button
+                    </button>
+                    <span
+                      style={{
+                        background: 'var(--accent)',
+                        color: '#FFFFFF',
+                        padding: '4px 10px',
+                        borderRadius: 'var(--radius-full)',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                      }}
+                    >
+                      Accent Badge
+                    </span>
+                  </div>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div className="form-group">
                     <label className="form-label">Primary Brand Color Token</label>
@@ -277,17 +407,17 @@ export function SettingsView() {
                           cursor: 'pointer',
                         }}
                         value={settings.primaryColor}
-                        onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
+                        onChange={(e) => updateField('primaryColor', e.target.value)}
                       />
                       <input
                         type="text"
                         className="form-control"
                         value={settings.primaryColor}
-                        onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
+                        onChange={(e) => updateField('primaryColor', e.target.value)}
                       />
                     </div>
                     <span className="form-hint">
-                      Applied to primary action buttons, active navigation states, and key highlights.
+                      Applied to admin buttons, active sidebar navigation links, focus borders, and highlights.
                     </span>
                   </div>
 
@@ -304,21 +434,17 @@ export function SettingsView() {
                           cursor: 'pointer',
                         }}
                         value={settings.secondaryColor}
-                        onChange={(e) =>
-                          setSettings({ ...settings, secondaryColor: e.target.value })
-                        }
+                        onChange={(e) => updateField('secondaryColor', e.target.value)}
                       />
                       <input
                         type="text"
                         className="form-control"
                         value={settings.secondaryColor}
-                        onChange={(e) =>
-                          setSettings({ ...settings, secondaryColor: e.target.value })
-                        }
+                        onChange={(e) => updateField('secondaryColor', e.target.value)}
                       />
                     </div>
                     <span className="form-hint">
-                      Applied to complementary badges, feature highlights, and interactive accents.
+                      Applied to complementary badges, feature accents, and highlighted tags.
                     </span>
                   </div>
                 </div>
@@ -328,13 +454,18 @@ export function SettingsView() {
                   <select
                     className="form-control"
                     value={settings.fontFamily}
-                    onChange={(e) => setSettings({ ...settings, fontFamily: e.target.value })}
+                    onChange={(e) => updateField('fontFamily', e.target.value)}
                   >
                     <option value="Inter">Inter (Clean, Modern SaaS Standard)</option>
                     <option value="Roboto">Roboto (Versatile Enterprise)</option>
                     <option value="Outfit">Outfit (Tech Forward & Friendly)</option>
                     <option value="Montserrat">Montserrat (Geometric Elegance)</option>
+                    <option value="Poppins">Poppins (Modern & Rounded)</option>
+                    <option value="Open Sans">Open Sans (Neutral & Readable)</option>
                   </select>
+                  <span className="form-hint">
+                    Dynamically loaded from Google Fonts and applied globally to the Admin Panel.
+                  </span>
                 </div>
               </div>
             )}
@@ -349,7 +480,7 @@ export function SettingsView() {
                       type="email"
                       className="form-control"
                       value={settings.contactEmail}
-                      onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
+                      onChange={(e) => updateField('contactEmail', e.target.value)}
                     />
                   </div>
 
@@ -359,7 +490,7 @@ export function SettingsView() {
                       type="text"
                       className="form-control"
                       value={settings.contactPhone}
-                      onChange={(e) => setSettings({ ...settings, contactPhone: e.target.value })}
+                      onChange={(e) => updateField('contactPhone', e.target.value)}
                     />
                   </div>
                 </div>
@@ -370,7 +501,7 @@ export function SettingsView() {
                     type="text"
                     className="form-control"
                     value={settings.address}
-                    onChange={(e) => setSettings({ ...settings, address: e.target.value })}
+                    onChange={(e) => updateField('address', e.target.value)}
                   />
                 </div>
 
@@ -381,17 +512,17 @@ export function SettingsView() {
                     className="form-control"
                     placeholder="https://www.google.com/maps/embed?..."
                     value={settings.mapEmbedUrl}
-                    onChange={(e) => setSettings({ ...settings, mapEmbedUrl: e.target.value })}
+                    onChange={(e) => updateField('mapEmbedUrl', e.target.value)}
                   />
                 </div>
               </div>
             )}
 
-            {/* Social Links Tab */}
+            {/* Social Channels Tab */}
             {activeTab === 'social' && (
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div className="form-group">
-                  <label className="form-label">LinkedIn Company URL</label>
+                  <label className="form-label">LinkedIn Organization URL</label>
                   <input
                     type="url"
                     className="form-control"
@@ -538,11 +669,7 @@ export function SettingsView() {
       <MediaPickerModal
         isOpen={!!mediaPickerTarget}
         onClose={() => setMediaPickerTarget(null)}
-        onSelect={(url) => {
-          if (mediaPickerTarget) {
-            setSettings((prev) => ({ ...prev, [mediaPickerTarget]: url }));
-          }
-        }}
+        onSelect={handleMediaSelect}
         currentUrl={mediaPickerTarget ? settings[mediaPickerTarget] : ''}
       />
     </div>

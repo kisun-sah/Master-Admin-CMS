@@ -23,9 +23,16 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
+import { useSettings } from '../../context/SettingsContext.jsx';
 
 export function Sidebar({ currentRoute, onNavigate, collapsed, onToggleCollapse }) {
   const { user, logout, hasPermission } = useAuth();
+  const { settings } = useSettings();
+  const [logoFailed, setLogoFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setLogoFailed(false);
+  }, [settings?.logo, settings?.favicon]);
 
   const navigationGroups = [
     {
@@ -80,14 +87,58 @@ export function Sidebar({ currentRoute, onNavigate, collapsed, onToggleCollapse 
     >
       <div className="sidebar-header">
         {!collapsed && (
-          <div className="brand-title">
-            <div className="brand-badge">M</div>
-            <span>Master CMS</span>
+          <div className="brand-title" style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+            {settings?.logo && !logoFailed ? (
+              <img
+                src={settings.logo}
+                alt={settings?.siteName || 'Logo'}
+                style={{
+                  maxHeight: '34px',
+                  maxWidth: '120px',
+                  objectFit: 'contain',
+                  borderRadius: '4px',
+                  display: 'block',
+                }}
+                onError={() => setLogoFailed(true)}
+              />
+            ) : (
+              <div className="brand-badge">
+                {settings?.siteName ? settings.siteName.trim().charAt(0).toUpperCase() : 'M'}
+              </div>
+            )}
+            <span
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '120px',
+              }}
+              title={settings?.siteName || 'Master CMS'}
+            >
+              {settings?.siteName || 'Master CMS'}
+            </span>
           </div>
         )}
         {collapsed && (
-          <div className="brand-badge" style={{ margin: '0 auto' }}>
-            M
+          <div style={{ margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {(settings?.favicon || settings?.logo) && !logoFailed ? (
+              <img
+                src={settings?.favicon || settings?.logo}
+                alt={settings?.siteName || 'Icon'}
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  objectFit: 'contain',
+                  borderRadius: 'var(--radius-sm)',
+                  display: 'block',
+                }}
+                onError={() => setLogoFailed(true)}
+              />
+            ) : (
+              <div className="brand-badge">
+                {settings?.siteName ? settings.siteName.trim().charAt(0).toUpperCase() : 'M'}
+              </div>
+            )}
           </div>
         )}
         <button
