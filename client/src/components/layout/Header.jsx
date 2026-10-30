@@ -1,9 +1,9 @@
 import React from 'react';
-import { Search, ExternalLink, Shield } from 'lucide-react';
+import { Search, ExternalLink, Shield, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
 
-export function Header({ currentRoute, onOpenProfile }) {
+export function Header({ currentRoute, onOpenProfile, onToggleMobileSidebar }) {
   const { user } = useAuth();
   const { settings } = useSettings();
 
@@ -33,7 +33,16 @@ export function Header({ currentRoute, onOpenProfile }) {
 
   return (
     <header className="topbar">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <button
+          type="button"
+          className="mobile-menu-btn"
+          onClick={onToggleMobileSidebar}
+          title="Toggle Navigation Menu"
+          aria-label="Toggle Navigation Menu"
+        >
+          <Menu size={20} />
+        </button>
         <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
           {settings?.siteName || 'Workspace'}
         </span>

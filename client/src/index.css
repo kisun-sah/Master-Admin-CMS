@@ -319,10 +319,10 @@ a {
 .sidebar-nav {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 12px;
+  padding: 14px 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 .nav-group-title {
   font-size: 11px;
@@ -342,6 +342,10 @@ a {
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
   transition: all 0.15s ease;
   user-select: none;
 }
@@ -353,6 +357,121 @@ a {
   background: var(--primary-light);
   color: var(--primary);
   font-weight: 600;
+}
+.nav-item.active svg {
+  color: var(--primary);
+}
+
+/* Collapsible Parent Menu Button */
+.nav-parent-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.nav-parent-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-main);
+}
+.nav-parent-btn.expanded {
+  color: var(--text-main);
+  font-weight: 600;
+}
+.nav-parent-btn.active-parent {
+  color: var(--primary);
+  background: rgba(79, 70, 229, 0.07);
+  font-weight: 600;
+}
+.nav-parent-btn.active-parent svg.parent-icon {
+  color: var(--primary);
+}
+
+.parent-chevron {
+  margin-left: auto;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-subtle);
+  flex-shrink: 0;
+}
+.parent-chevron.rotated {
+  transform: rotate(180deg);
+  color: var(--text-main);
+}
+.nav-parent-btn.active-parent .parent-chevron.rotated {
+  color: var(--primary);
+}
+
+/* Smooth Accordion Submenu Animation using CSS Grid */
+.nav-submenu-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.24s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.nav-submenu-wrapper.expanded {
+  grid-template-rows: 1fr;
+}
+.nav-submenu-inner {
+  overflow: hidden;
+}
+.nav-submenu-list {
+  margin-left: 20px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  list-style: none;
+}
+
+/* Submenu Items */
+.nav-subitem-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7.5px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+  transition: all 0.15s ease;
+  user-select: none;
+  position: relative;
+}
+.nav-subitem-btn:hover {
+  background: var(--surface-hover);
+  color: var(--text-main);
+}
+.nav-subitem-btn.active {
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+}
+.nav-subitem-btn.active svg {
+  color: var(--primary);
+}
+
+.nav-subitem-btn:focus-visible,
+.nav-parent-btn:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: -1px;
 }
 .main-wrapper {
   flex: 1;
@@ -489,4 +608,56 @@ a {
   color: var(--primary);
   border-bottom-color: var(--primary);
   font-weight: 600;
+}
+
+/* Responsive Drawer & Mobile Breakpoints */
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  padding: 6px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+.mobile-menu-btn:hover {
+  background: var(--surface-hover);
+}
+.sidebar-mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: var(--shadow-xl);
+  }
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  .sidebar-mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+  }
+  .topbar {
+    padding: 0 16px;
+  }
+  .page-content {
+    padding: 16px;
+  }
 }

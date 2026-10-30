@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar.jsx';
 import { Header } from './Header.jsx';
 import { ProfileModal } from '../common/ProfileModal.jsx';
@@ -24,16 +25,69 @@ import { CareersView } from '../../features/careers/CareersView.jsx';
 import { JobApplicationsView } from '../../features/jobapplications/JobApplicationsView.jsx';
 import { GalleryView } from '../../features/gallery/GalleryView.jsx';
 
+const VALID_ROUTES = new Set([
+  'dashboard',
+  'settings',
+  'navigation',
+  'sliders',
+  'popups',
+  'pages',
+  'services',
+  'blogs',
+  'gallery',
+  'media',
+  'testimonials',
+  'team',
+  'partners',
+  'faqs',
+  'careers',
+  'jobapplications',
+  'contacts',
+  'seo',
+  'users',
+  'audit',
+  'system',
+]);
+
+function getRouteFromLocation(location) {
+  // Support both hash routing and HTML5 path routing
+  if (location.hash && location.hash.length > 1) {
+    const rawHash = location.hash.replace(/^#\/?/, '').split('/')[0].split('?')[0].toLowerCase();
+    if (VALID_ROUTES.has(rawHash)) return rawHash;
+  }
+  const rawPath = location.pathname.replace(/^\/+/, '').split('/')[0].split('?')[0].toLowerCase();
+  if (VALID_ROUTES.has(rawPath)) return rawPath;
+  return 'dashboard';
+}
+
 export function AppLayout() {
-  const [currentRoute, setCurrentRoute] = useState('dashboard');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const currentRoute = getRouteFromLocation(location);
   const [selectedVacancyForApplications, setSelectedVacancyForApplications] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Close mobile drawer on route changes
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [location.pathname, location.hash]);
+
+  const handleNavigate = (routeKey) => {
+    setIsMobileOpen(false);
+    if (routeKey === 'dashboard') {
+      navigate('/');
+    } else {
+      navigate(`/${routeKey}`);
+    }
+  };
 
   const renderActiveView = () => {
     switch (currentRoute) {
       case 'dashboard':
-        return <DashboardView onNavigate={setCurrentRoute} />;
+        return <DashboardView onNavigate={handleNavigate} />;
       case 'pages':
         return <PagesView />;
       case 'services':
@@ -47,7 +101,7 @@ export function AppLayout() {
           <CareersView
             onNavigateToApplications={(vacId) => {
               setSelectedVacancyForApplications(vacId);
-              setCurrentRoute('jobapplications');
+              handleNavigate('jobapplications');
             }}
           />
         );
@@ -78,7 +132,7 @@ export function AppLayout() {
       case 'navigation':
         return <NavigationView />;
       case 'seo':
-        return <SEOView onNavigate={setCurrentRoute} />;
+        return <SEOView onNavigate={handleNavigate} />;
       case 'users':
         return <UsersView />;
       case 'audit':
@@ -86,23 +140,35 @@ export function AppLayout() {
       case 'system':
         return <SystemView />;
       default:
-        return <DashboardView onNavigate={setCurrentRoute} />;
+        return <DashboardView onNavigate={handleNavigate} />;
     }
   };
 
   return (
     <div className="app-layout">
+      {/* Mobile Drawer Backdrop */}
+      {isMobileOpen && (
+        <div
+          className="sidebar-mobile-backdrop"
+          onClick={() => setIsMobileOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       <Sidebar
         currentRoute={currentRoute}
-        onNavigate={setCurrentRoute}
+        onNavigate={handleNavigate}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        mobileOpen={isMobileOpen}
+        onCloseMobile={() => setIsMobileOpen(false)}
       />
 
       <div className="main-wrapper">
         <Header
           currentRoute={currentRoute}
           onOpenProfile={() => setIsProfileOpen(true)}
+          onToggleMobileSidebar={() => setIsMobileOpen((prev) => !prev)}
         />
 
         <main className="page-content">{renderActiveView()}</main>

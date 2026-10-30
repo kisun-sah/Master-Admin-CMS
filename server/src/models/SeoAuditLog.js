@@ -64,3 +64,4 @@ const seoAuditLogSchema = new mongoose.Schema(
 seoAuditLogSchema.index({ createdAt: -1 });
 
 export const SeoAuditLog = mongoose.model('SeoAuditLog', seoAuditLogSchema);
+
