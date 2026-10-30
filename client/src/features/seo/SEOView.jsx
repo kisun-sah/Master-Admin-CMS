@@ -610,7 +610,7 @@ export function SEOView({ onNavigate }) {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '24px',
-                      background: '#F8FAFC',
+                      background: 'var(--surface-hover)',
                       borderRadius: 'var(--radius-md)',
                       border: '1px solid var(--border)',
                       marginBottom: '24px',
@@ -680,7 +680,7 @@ export function SEOView({ onNavigate }) {
                       <div
                         style={{
                           padding: '12px 18px',
-                          background: '#FFFFFF',
+                          background: 'var(--surface)',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid var(--border)',
                           minWidth: '130px',
@@ -705,7 +705,7 @@ export function SEOView({ onNavigate }) {
                       <div
                         style={{
                           padding: '12px 18px',
-                          background: '#FFFFFF',
+                          background: 'var(--surface)',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid var(--border)',
                           minWidth: '130px',
@@ -730,7 +730,7 @@ export function SEOView({ onNavigate }) {
                       <div
                         style={{
                           padding: '12px 18px',
-                          background: '#FFFFFF',
+                          background: 'var(--surface)',
                           borderRadius: 'var(--radius-sm)',
                           border: '1px solid var(--border)',
                           minWidth: '130px',
@@ -766,7 +766,7 @@ export function SEOView({ onNavigate }) {
                     <div
                       style={{
                         padding: '16px',
-                        background: '#FFFFFF',
+                        background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-md)',
                         display: 'flex',
@@ -801,7 +801,7 @@ export function SEOView({ onNavigate }) {
                     <div
                       style={{
                         padding: '16px',
-                        background: '#FFFFFF',
+                        background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-md)',
                         display: 'flex',
@@ -836,7 +836,7 @@ export function SEOView({ onNavigate }) {
                     <div
                       style={{
                         padding: '16px',
-                        background: '#FFFFFF',
+                        background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-md)',
                         display: 'flex',
@@ -911,7 +911,7 @@ export function SEOView({ onNavigate }) {
                         key={item.type}
                         style={{
                           padding: '16px',
-                          background: '#FFFFFF',
+                          background: 'var(--surface)',
                           border: '1px solid var(--border)',
                           borderRadius: 'var(--radius-md)',
                         }}
@@ -974,7 +974,7 @@ export function SEOView({ onNavigate }) {
                   ) : (
                     <div
                       style={{
-                        background: '#FFFFFF',
+                        background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-md)',
                         overflow: 'hidden',
@@ -982,7 +982,7 @@ export function SEOView({ onNavigate }) {
                     >
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
                         <thead>
-                          <tr style={{ background: '#F8FAFC', borderBottom: '1px solid var(--border)' }}>
+                          <tr style={{ background: 'var(--surface-hover)', borderBottom: '1px solid var(--border)' }}>
                             <th style={{ padding: '10px 16px', textAlign: 'left' }}>Date & Time</th>
                             <th style={{ padding: '10px 16px', textAlign: 'center' }}>Overall Score</th>
                             <th style={{ padding: '10px 16px', textAlign: 'center' }}>Metadata</th>
@@ -1148,7 +1148,7 @@ export function SEOView({ onNavigate }) {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         padding: '16px 20px',
-                        background: '#FFFFFF',
+                        background: 'var(--surface)',
                         border: '1px solid var(--border)',
                         borderRadius: 'var(--radius-md)',
                         boxShadow: 'var(--shadow-sm)',
@@ -1735,7 +1735,7 @@ export function SEOView({ onNavigate }) {
           <div
             style={{
               padding: '12px 16px',
-              background: '#F8FAFC',
+              background: 'var(--bg-canvas)',
               borderRadius: 'var(--radius-sm)',
               border: '1px solid var(--border)',
               marginBottom: '16px',

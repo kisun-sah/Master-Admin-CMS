@@ -2,6 +2,7 @@ import React from 'react';
 import { Search, ExternalLink, Shield, Menu } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
+import { ThemeToggle } from '../common/ThemeToggle.jsx';
 
 export function Header({ currentRoute, onOpenProfile, onToggleMobileSidebar }) {
   const { user } = useAuth();
@@ -69,6 +70,9 @@ export function Header({ currentRoute, onOpenProfile, onToggleMobileSidebar }) {
           <Shield size={14} />
           <span style={{ textTransform: 'capitalize' }}>{user?.role || 'Admin'}</span>
         </div>
+
+        {/* Theme Mode Switcher (Light / Dark / System) */}
+        <ThemeToggle variant="segmented" />
 
         <button
           className="btn btn-secondary btn-sm"

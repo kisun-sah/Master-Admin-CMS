@@ -3,6 +3,7 @@ import { Modal } from '../ui/Modal.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { api } from '../../lib/api.js';
 import { Shield, Key, User as UserIcon } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle.jsx';
 
 export function ProfileModal({ isOpen, onClose }) {
   const { user, setUser, addToast } = useAuth();
@@ -91,9 +92,17 @@ export function ProfileModal({ isOpen, onClose }) {
               className="form-control"
               value={user?.email || ''}
               disabled
-              style={{ background: '#F1F5F9' }}
+              style={{ background: 'var(--surface-hover)' }}
             />
             <span className="form-hint">Email can only be modified by Super Administrators.</span>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">System Appearance / Theme Mode</label>
+            <div style={{ marginTop: '4px' }}>
+              <ThemeToggle variant="segmented" showLabels={true} />
+            </div>
+            <span className="form-hint">Choose between Light Mode, Dark Mode, or System Default.</span>
           </div>
 
           <div className="form-group">

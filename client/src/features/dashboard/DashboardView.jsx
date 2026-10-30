@@ -465,7 +465,7 @@ export function DashboardView({ onNavigate }) {
                 <span style={{ fontWeight: 600 }}>Draft Creations</span>
                 <span style={{ color: 'var(--text-muted)' }}>100%</span>
               </div>
-              <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--surface-hover)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{ width: '100%', height: '100%', background: '#4F46E5' }} />
               </div>
             </div>
@@ -475,7 +475,7 @@ export function DashboardView({ onNavigate }) {
                 <span style={{ fontWeight: 600 }}>Editorial Validation</span>
                 <span style={{ color: 'var(--text-muted)' }}>75%</span>
               </div>
-              <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--surface-hover)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{ width: '75%', height: '100%', background: '#06B6D4' }} />
               </div>
             </div>
@@ -485,7 +485,7 @@ export function DashboardView({ onNavigate }) {
                 <span style={{ fontWeight: 600 }}>SEO Metadata Verified</span>
                 <span style={{ color: 'var(--text-muted)' }}>50%</span>
               </div>
-              <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--surface-hover)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{ width: '50%', height: '100%', background: '#16A34A' }} />
               </div>
             </div>
@@ -495,7 +495,7 @@ export function DashboardView({ onNavigate }) {
                 <span style={{ fontWeight: 600 }}>Published to Public API</span>
                 <span style={{ color: 'var(--text-muted)' }}>35%</span>
               </div>
-              <div style={{ height: '8px', background: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+              <div style={{ height: '8px', background: 'var(--surface-hover)', borderRadius: '4px', overflow: 'hidden' }}>
                 <div style={{ width: '35%', height: '100%', background: '#D97706' }} />
               </div>
             </div>
@@ -563,7 +563,7 @@ export function DashboardView({ onNavigate }) {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       padding: '10px 14px',
-                      background: '#F8FAFC',
+                      background: 'var(--surface-hover)',
                       borderRadius: 'var(--radius-sm)',
                       border: '1px solid var(--border)',
                     }}

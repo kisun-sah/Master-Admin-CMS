@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { useSettings } from '../../context/SettingsContext.jsx';
+import { ThemeToggle } from '../common/ThemeToggle.jsx';
 
 // Central Navigation Structure Definition
 const NAVIGATION_GROUPS = [
@@ -285,6 +286,38 @@ export function Sidebar({
         </button>
       </div>
 
+      {/* Above Menu Options: User & Role Banner */}
+      {!collapsed && user && (
+        <div className="sidebar-user-section">
+          <div className="sidebar-user-avatar">
+            {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+            <span className="user-online-dot" title="Active session" />
+          </div>
+          <div className="sidebar-user-details">
+            <div className="sidebar-user-name" title={user.displayName}>
+              {user.displayName || 'Administrator'}
+            </div>
+            <div className="sidebar-user-role-wrap">
+              <span className="sidebar-role-badge">
+                {user.role || 'Admin'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {collapsed && user && (
+        <div
+          className="sidebar-user-section collapsed"
+          title={`${user.displayName || 'User'} (${user.role || 'Admin'})`}
+        >
+          <div className="sidebar-user-avatar">
+            {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+            <span className="user-online-dot" />
+          </div>
+        </div>
+      )}
+
       {/* Navigation Groups */}
       <nav className="sidebar-nav">
         {NAVIGATION_GROUPS.map((group, gIdx) => {
@@ -406,70 +439,50 @@ export function Sidebar({
         })}
       </nav>
 
-      {/* Footer Profile Strip */}
+      {/* Footer Profile & Theme Strip */}
       <div
+        className="sidebar-footer"
         style={{
           borderTop: '1px solid var(--border)',
-          padding: collapsed ? '12px 6px' : '14px 16px',
+          padding: collapsed ? '12px 6px' : '12px 14px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: collapsed ? 'center' : 'space-between',
+          gap: '8px',
+          flexWrap: collapsed ? 'nowrap' : 'nowrap',
         }}
       >
-        {!collapsed && user && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-            <div
-              style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '50%',
-                background: 'var(--primary)',
-                color: '#fff',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 600,
-                fontSize: '13px',
-                flexShrink: 0,
-              }}
+        {!collapsed ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <ThemeToggle variant="segmented" />
+            </div>
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={logout}
+              title="Sign Out"
+              style={{ color: 'var(--danger)' }}
+              aria-label="Sign Out"
             >
-              {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'A'}
-            </div>
-            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-              <div
-                style={{
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                }}
-              >
-                {user.displayName}
-              </div>
-              <div
-                style={{
-                  fontSize: '11px',
-                  color: 'var(--text-muted)',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {user.role}
-              </div>
-            </div>
+              <LogOut size={18} />
+            </button>
+          </>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+            <ThemeToggle variant="dropdown" />
+            <button
+              type="button"
+              className="btn-icon"
+              onClick={logout}
+              title="Sign Out"
+              style={{ color: 'var(--danger)' }}
+              aria-label="Sign Out"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
         )}
-
-        <button
-          type="button"
-          className="btn-icon"
-          onClick={logout}
-          title="Sign Out"
-          style={{ color: 'var(--danger)' }}
-          aria-label="Sign Out"
-        >
-          <LogOut size={18} />
-        </button>
       </div>
     </aside>
   );
