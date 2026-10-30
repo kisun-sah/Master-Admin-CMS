@@ -19,3 +19,4 @@ router.patch('/:id/status', requireAuth, requirePermission('careers:manage'), up
 router.delete('/:id', requireAuth, requirePermission('careers:manage'), deleteVacancy);
 
 export default router;
+

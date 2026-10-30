@@ -16,6 +16,14 @@ const storage = multer.diskStorage({
     cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
+    // Preserve properly decoded UTF-8 filename
+    try {
+      if (file.originalname) {
+        file.originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+      }
+    } catch (e) {
+      // Keep originalname as-is if decoding fails
+    }
     const ext = path.extname(file.originalname).toLowerCase();
     const safeName = `${uuidv4()}${ext}`;
     cb(null, safeName);

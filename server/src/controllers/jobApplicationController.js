@@ -486,3 +486,4 @@ export async function deleteApplication(req, res, next) {
     next(error);
   }
 }
+

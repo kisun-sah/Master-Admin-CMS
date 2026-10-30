@@ -135,3 +135,4 @@ jobVacancySchema.index({ status: 1, isDeleted: 1, deadline: 1 });
 jobVacancySchema.index({ department: 1, employmentType: 1 });
 
 export const JobVacancy = mongoose.model('JobVacancy', jobVacancySchema);
+

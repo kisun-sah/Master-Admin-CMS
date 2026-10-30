@@ -8,6 +8,8 @@ import fs from 'fs';
 import { configureSession } from './config/session.js';
 import routes from './routes/index.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { publicRedirectMiddleware } from './middleware/redirectMiddleware.js';
+import { generateRobotsTxt, generateSitemapXml } from './controllers/seoController.js';
 
 const app = express();
 
@@ -101,6 +103,13 @@ app.get('/api/docs', (req, res) => {
 </body>
 </html>`);
 });
+
+// Dynamic robots.txt and sitemap.xml at root level
+app.get('/robots.txt', generateRobotsTxt);
+app.get('/sitemap.xml', generateSitemapXml);
+
+// Public redirect engine for incoming traffic (301/302 execution)
+app.use(publicRedirectMiddleware());
 
 // Mount versioned API routes
 app.use('/api/v1', routes);

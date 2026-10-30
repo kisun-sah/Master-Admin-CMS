@@ -24,16 +24,35 @@ const redirectSchema = new mongoose.Schema(
       default: true,
       index: true,
     },
+    description: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     hitCount: {
       type: Number,
       default: 0,
+      index: true,
     },
     lastTriggeredAt: {
       type: Date,
       default: null,
     },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
   },
   { timestamps: true }
 );
+
+redirectSchema.index({ isActive: 1, sourcePath: 1 });
+redirectSchema.index({ createdAt: -1 });
 
 export const Redirect = mongoose.model('Redirect', redirectSchema);

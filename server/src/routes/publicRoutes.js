@@ -11,7 +11,7 @@ import { FAQ } from '../models/FAQ.js';
 import { NavigationMenu } from '../models/NavigationMenu.js';
 import { getActivePublicPopup } from '../controllers/popupsController.js';
 import { submitContact } from '../controllers/contactController.js';
-import { generateSitemapXml } from '../controllers/seoController.js';
+import { generateSitemapXml, generateRobotsTxt } from '../controllers/seoController.js';
 import { getPublicCareers, getPublicCareerBySlug } from '../controllers/careerController.js';
 import { submitApplication } from '../controllers/jobApplicationController.js';
 import {
@@ -150,7 +150,8 @@ router.get('/gallery', getPublicGallery);
 router.get('/gallery/:slug', getPublicAlbumBySlug);
 router.get('/gallery-images', getPublicGalleryImages);
 
-// Sitemap
+// Sitemap & Search Engine Directives
 router.get('/sitemap.xml', generateSitemapXml);
+router.get('/robots.txt', generateRobotsTxt);
 
 export default router;

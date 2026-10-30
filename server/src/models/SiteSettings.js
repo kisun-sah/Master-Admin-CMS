@@ -90,8 +90,11 @@ const siteSettingsSchema = new mongoose.Schema(
       metaTitle: { type: String, default: 'Master Corporate CMS' },
       metaDescription: { type: String, default: 'Enterprise Web Operations & Content Engine' },
       defaultOgImage: { type: String, default: '' },
+      defaultTwitterImage: { type: String, default: '' },
       robots: { type: String, default: 'index, follow' },
       canonicalBase: { type: String, default: 'https://example.com' },
+      siteUrl: { type: String, default: 'https://example.com' },
+      customRobotsTxt: { type: String, default: '' },
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,

@@ -426,3 +426,4 @@ export async function getPublicCareerBySlug(req, res, next) {
     next(error);
   }
 }
+

@@ -985,3 +985,4 @@ export function CareersView({ onNavigateToApplications }) {
     </div>
   );
 }
+

@@ -27,10 +27,16 @@ export async function uploadMedia(req, res, next) {
       }
 
       const assetUrl = `/uploads/${file.filename}`;
+      let originalName = file.originalname || file.filename;
+      try {
+        originalName = Buffer.from(originalName, 'latin1').toString('utf8');
+      } catch (e) {
+        // Keep original
+      }
 
       const asset = await MediaAsset.create({
         filename: file.filename,
-        originalName: file.originalname,
+        originalName,
         storageKey: file.path,
         url: assetUrl,
         mimeType: file.mimetype,
@@ -38,7 +44,7 @@ export async function uploadMedia(req, res, next) {
         size: file.size,
         uploader: req.user?._id,
         uploaderEmail: req.user?.email || 'admin',
-        altText: path.parse(file.originalname).name,
+        altText: path.parse(originalName).name,
       });
 
       createdAssets.push(asset);

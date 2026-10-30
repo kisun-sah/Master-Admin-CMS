@@ -175,3 +175,4 @@ jobApplicationSchema.index({ vacancy: 1, status: 1, createdAt: -1 });
 jobApplicationSchema.index({ 'candidate.email': 1, vacancy: 1 });
 
 export const JobApplication = mongoose.model('JobApplication', jobApplicationSchema);
+

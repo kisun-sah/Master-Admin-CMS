@@ -392,7 +392,166 @@ test('Master Admin CMS API Integration Suite', async (t) => {
     assert.ok(pubAlbumDetailRes.body.data.images.length >= 2);
   });
 
-  await t.test('18. Logout and verify session invalidation', async () => {
+  await t.test('18. Dynamic XML Sitemap & Robots.txt Generation', async () => {
+    // 1. Dynamic sitemap at /api/v1/public/sitemap.xml
+    const sitemapRes = await request(app).get('/api/v1/public/sitemap.xml');
+    assert.equal(sitemapRes.status, 200);
+    assert.ok(sitemapRes.headers['content-type'].includes('application/xml'));
+    assert.ok(sitemapRes.text.includes('<?xml version="1.0" encoding="UTF-8"?>'));
+    assert.ok(sitemapRes.text.includes('<urlset'));
+    assert.ok(sitemapRes.text.includes('<loc>'));
+    assert.ok(sitemapRes.text.includes('<lastmod>'));
+
+    // 2. Root sitemap.xml
+    const rootSitemapRes = await request(app).get('/sitemap.xml');
+    assert.equal(rootSitemapRes.status, 200);
+    assert.ok(rootSitemapRes.text.includes('<?xml'));
+
+    // 3. Dynamic robots.txt at /robots.txt
+    const robotsRes = await request(app).get('/robots.txt');
+    assert.equal(robotsRes.status, 200);
+    assert.ok(robotsRes.headers['content-type'].includes('text/plain'));
+    assert.ok(robotsRes.text.includes('User-agent: *'));
+    assert.ok(robotsRes.text.includes('Disallow: /admin'));
+    assert.ok(robotsRes.text.includes('Disallow: /api'));
+    assert.ok(robotsRes.text.includes('Sitemap:'));
+
+    // 4. Public endpoint for robots.txt
+    const pubRobotsRes = await request(app).get('/api/v1/public/robots.txt');
+    assert.equal(pubRobotsRes.status, 200);
+    assert.ok(pubRobotsRes.text.includes('User-agent: *'));
+  });
+
+  await t.test('19. SEO Health Audit Engine and Historical Trends', async () => {
+    // 1. Full SEO Health Audit
+    const healthRes = await request(app).get('/api/v1/seo/health').set('Cookie', authCookie);
+    assert.equal(healthRes.status, 200);
+    assert.equal(healthRes.body.success, true);
+    assert.ok(typeof healthRes.body.data.score === 'number');
+    assert.ok(typeof healthRes.body.data.metadataScore === 'number');
+    assert.ok(typeof healthRes.body.data.accessibilityScore === 'number');
+    assert.ok(typeof healthRes.body.data.technicalScore === 'number');
+    assert.ok(healthRes.body.data.breakdown);
+    assert.ok(healthRes.body.data.breakdown.pages);
+    assert.ok(Array.isArray(healthRes.body.data.issues));
+
+    // 2. SEO Audit Trends (persisted audit history)
+    const trendsRes = await request(app).get('/api/v1/seo/trends').set('Cookie', authCookie);
+    assert.equal(trendsRes.status, 200);
+    assert.equal(trendsRes.body.success, true);
+    assert.ok(Array.isArray(trendsRes.body.data));
+    assert.ok(trendsRes.body.data.length >= 1);
+    assert.ok(typeof trendsRes.body.data[0].overallScore === 'number');
+  });
+
+  await t.test('20. Global SEO Settings & Crawler Directives', async () => {
+    // 1. Get SEO Settings
+    const getRes = await request(app).get('/api/v1/seo/settings').set('Cookie', authCookie);
+    assert.equal(getRes.status, 200);
+    assert.equal(getRes.body.success, true);
+    assert.ok(getRes.body.data.robotsDirective);
+
+    // 2. Update SEO Settings
+    const updateRes = await request(app)
+      .put('/api/v1/seo/settings')
+      .set('Cookie', authCookie)
+      .send({
+        siteTitle: 'Automated SEO Test Platform',
+        siteUrl: 'https://seotest.example.com',
+        defaultMetaDescription: 'A production-grade MERN CMS platform with full search engine health and audit tracking capabilities.',
+        defaultOgImage: 'https://seotest.example.com/uploads/og-test.png',
+        defaultTwitterImage: 'https://seotest.example.com/uploads/twitter-test.png',
+        defaultCanonicalBase: 'https://seotest.example.com',
+        robotsDirective: 'index, follow',
+        customRobotsTxt: 'Disallow: /temporary-crawler-test/',
+      });
+    assert.equal(updateRes.status, 200);
+    assert.equal(updateRes.body.success, true);
+    assert.equal(updateRes.body.data.siteTitle, 'Automated SEO Test Platform');
+
+    // 3. Verify custom directive is reflected in dynamic /robots.txt
+    const verifyRobots = await request(app).get('/robots.txt');
+    assert.equal(verifyRobots.status, 200);
+    assert.ok(verifyRobots.text.includes('Disallow: /temporary-crawler-test/'));
+    assert.ok(verifyRobots.text.includes('https://seotest.example.com/sitemap.xml'));
+  });
+
+  let testRedirectId;
+  const sourceA = `/old-landing-${Date.now()}`;
+  const destB = `/new-landing-${Date.now()}`;
+
+  await t.test('21. Redirect Engine, Loop Prevention, and Public 301/302 Interception', async () => {
+    // 1. Create redirect A -> B
+    const createRes = await request(app)
+      .post('/api/v1/seo/redirects')
+      .set('Cookie', authCookie)
+      .send({
+        sourcePath: sourceA,
+        destinationPath: destB,
+        statusCode: 301,
+        isActive: true,
+        description: 'Test redirect rule',
+      });
+    assert.equal(createRes.status, 201);
+    assert.equal(createRes.body.success, true);
+    assert.equal(createRes.body.data.sourcePath, sourceA);
+    testRedirectId = createRes.body.data._id;
+
+    // 2. Duplicate source rejection
+    const duplicateRes = await request(app)
+      .post('/api/v1/seo/redirects')
+      .set('Cookie', authCookie)
+      .send({
+        sourcePath: sourceA,
+        destinationPath: '/different-dest',
+        statusCode: 302,
+      });
+    assert.equal(duplicateRes.status, 409);
+
+    // 3. Loop prevention: B -> A must fail
+    const loopRes = await request(app)
+      .post('/api/v1/seo/redirects')
+      .set('Cookie', authCookie)
+      .send({
+        sourcePath: destB,
+        destinationPath: sourceA,
+        statusCode: 301,
+      });
+    assert.equal(loopRes.status, 400);
+    assert.equal(loopRes.body.error.code, 'CIRCULAR_REDIRECT');
+
+    // 4. Test public Express redirect execution via publicRedirectMiddleware
+    const redirectExecRes = await request(app).get(sourceA);
+    assert.equal(redirectExecRes.status, 301);
+    assert.equal(redirectExecRes.headers.location, destB);
+
+    // 5. List redirects with pagination and search
+    const listRes = await request(app)
+      .get('/api/v1/seo/redirects')
+      .set('Cookie', authCookie)
+      .query({ search: sourceA });
+    assert.equal(listRes.status, 200);
+    assert.equal(listRes.body.success, true);
+    assert.equal(listRes.body.data.length, 1);
+
+    // 6. Export CSV endpoint
+    const exportRes = await request(app)
+      .get('/api/v1/seo/redirects/export/csv')
+      .set('Cookie', authCookie);
+    assert.equal(exportRes.status, 200);
+    assert.ok(exportRes.headers['content-type'].includes('text/csv'));
+    assert.ok(exportRes.text.includes('sourcePath,destinationPath'));
+    assert.ok(exportRes.text.includes(sourceA));
+
+    // 7. Delete redirect rule
+    const deleteRes = await request(app)
+      .delete(`/api/v1/seo/redirects/${testRedirectId}`)
+      .set('Cookie', authCookie);
+    assert.equal(deleteRes.status, 200);
+    assert.equal(deleteRes.body.success, true);
+  });
+
+  await t.test('22. Logout and verify session invalidation', async () => {
     const logoutRes = await request(app).post('/api/v1/auth/logout').set('Cookie', authCookie);
     assert.equal(logoutRes.status, 200);
 

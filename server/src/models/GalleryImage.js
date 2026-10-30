@@ -90,3 +90,4 @@ const galleryImageSchema = new mongoose.Schema(
 galleryImageSchema.index({ album: 1, status: 1, isDeleted: 1, displayOrder: 1 });
 
 export const GalleryImage = mongoose.model('GalleryImage', galleryImageSchema);
+

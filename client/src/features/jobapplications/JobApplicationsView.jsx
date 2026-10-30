@@ -737,3 +737,4 @@ export function JobApplicationsView({ initialVacancyId = null }) {
     </div>
   );
 }
+

@@ -21,3 +21,4 @@ router.get('/:id/cv', requireAuth, requirePermission('jobapplications:download_c
 router.delete('/:id', requireAuth, requirePermission('jobapplications:manage'), deleteApplication);
 
 export default router;
+

@@ -41,3 +41,4 @@ router.put('/images/:id', requireAuth, requirePermission('gallery:manage'), upda
 router.delete('/images/:id', requireAuth, requirePermission('gallery:manage'), deleteImage);
 
 export default router;
+

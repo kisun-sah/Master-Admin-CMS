@@ -78,7 +78,7 @@ export function AppLayout() {
       case 'navigation':
         return <NavigationView />;
       case 'seo':
-        return <SEOView />;
+        return <SEOView onNavigate={setCurrentRoute} />;
       case 'users':
         return <UsersView />;
       case 'audit':
