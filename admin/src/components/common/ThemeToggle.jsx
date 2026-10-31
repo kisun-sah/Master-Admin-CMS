@@ -130,3 +130,4 @@ export function ThemeToggle({ variant = 'segmented', showLabels = false }) {
     </div>
   );
 }
+

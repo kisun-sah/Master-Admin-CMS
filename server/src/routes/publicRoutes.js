@@ -46,9 +46,21 @@ router.get('/pages/:slug', getPublicPageBySlug);
 router.get('/services', async (req, res, next) => {
   try {
     const services = await Service.find({ status: 'published', isDeleted: false })
-      .select('title slug icon featuredImage shortDescription content category order ctaLabel ctaLink seo')
+      .select('title slug icon featuredImage gallery shortDescription content category order ctaLabel ctaLink seo')
       .sort({ order: 1 });
     res.status(200).json({ success: true, data: services });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/services/:slug', async (req, res, next) => {
+  try {
+    const service = await Service.findOne({ slug: req.params.slug, status: 'published', isDeleted: false });
+    if (!service) {
+      return res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Service not found.' } });
+    }
+    res.status(200).json({ success: true, data: service });
   } catch (err) {
     next(err);
   }

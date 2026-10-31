@@ -19,6 +19,7 @@ pids
 # Dependency directories
 node_modules/
 */node_modules/
+client/
 
 # Environment files
 .env

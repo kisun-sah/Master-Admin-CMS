@@ -5,10 +5,16 @@
   "scripts": {
     "server": "npm start --prefix server",
     "server:dev": "npm run dev --prefix server",
-    "client": "npm run dev --prefix client",
+    "admin": "npm run dev --prefix admin",
+    "admin:build": "npm run build --prefix admin",
+    "public": "npm run dev --prefix public",
+    "public:build": "npm run build --prefix public",
+    "client": "npm run dev --prefix admin",
+    "build:client": "npm run build --prefix admin",
+    "frontend": "npm run dev --prefix public",
+    "build:frontend": "npm run build --prefix public",
     "seed": "npm run seed --prefix server",
-    "test:server": "npm test --prefix server",
-    "build:client": "npm run build --prefix client"
+    "test:server": "npm test --prefix server"
   },
   "keywords": [
     "cms",
