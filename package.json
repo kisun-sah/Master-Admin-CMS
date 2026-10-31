@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Master Admin CMS — Universal MERN Architecture",
   "scripts": {
+    "dev": "concurrently -n \"SERVER,ADMIN,PUBLIC\" -c \"cyan,magenta,blue\" \"npm run server:dev\" \"npm run admin\" \"npm run public\"",
+    "start": "concurrently -n \"SERVER,ADMIN,PUBLIC\" -c \"cyan,magenta,blue\" \"npm run server\" \"npm run admin\" \"npm run public\"",
     "server": "npm start --prefix server",
     "server:dev": "npm run dev --prefix server",
     "admin": "npm run dev --prefix admin",
@@ -25,5 +27,8 @@
     "mongodb"
   ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^10.0.6"
+  }
 }
