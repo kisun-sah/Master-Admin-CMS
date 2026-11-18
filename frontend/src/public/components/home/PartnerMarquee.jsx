@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 
 export default function PartnerMarquee({ partners = [] }) {
-  // Built-in core tech stack matching Screenshot 3
   const defaultTechStack = [
     { name: 'React', subtitle: 'Frontend Framework', icon: Layers },
     { name: 'Node.js', subtitle: 'Runtime Engine', icon: Terminal },
@@ -25,29 +24,25 @@ export default function PartnerMarquee({ partners = [] }) {
     { name: 'AWS Cloud', subtitle: 'Infra & Storage', icon: Server },
   ];
 
-  // Combine dynamic CMS partners with tech stack
   const dynamicItems =
-    partners && partners.length > 0
-      ? partners
-      : defaultTechStack;
+    partners && partners.length > 0 ? partners : defaultTechStack;
 
-  // Duplicate for seamless infinite loop
   const marqueeItems = [...dynamicItems, ...dynamicItems, ...dynamicItems];
 
   return (
-    <section className="py-10 border-y border-white/10 bg-[#070A10]/70 overflow-hidden relative">
-      {/* Subtle edge fade overlays */}
-      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#070A10] to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#070A10] to-transparent z-10 pointer-events-none" />
+    <section className="py-10 border-y border-slate-200/80 bg-[#F8FAFC] overflow-hidden relative">
+      {/* Edge fade gradients for daylight */}
+      <div className="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#F8FAFC] to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#F8FAFC] to-transparent z-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 mb-4 text-center">
-        <p className="text-xs font-bold tracking-widest uppercase text-slate-400">
-          Trusted Tech & Partners
+        <p className="text-xs font-extrabold tracking-widest uppercase text-slate-500">
+          Trusted Technologies & Business Partners
         </p>
       </div>
 
       {/* Infinite scrolling track */}
-      <div className="flex gap-8 items-center whitespace-nowrap animate-marquee">
+      <div className="flex gap-6 items-center whitespace-nowrap animate-marquee">
         {marqueeItems.map((item, idx) => {
           const hasImage = Boolean(item.logoUrl);
           const IconComponent = item.icon || Layers;
@@ -55,20 +50,29 @@ export default function PartnerMarquee({ partners = [] }) {
           return (
             <div
               key={idx}
-              className="inline-flex items-center gap-3 px-6 py-2.5 rounded-xl glass-card border border-white/5 hover:border-cyan-500/30 transition-all cursor-default group"
+              className="inline-flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white border border-slate-200 shadow-sm hover:border-blue-300 hover:shadow-md transition-all cursor-default group"
             >
               {hasImage ? (
                 <img
                   src={resolveMediaUrl(item.logoUrl)}
                   alt={item.name}
-                  className="h-6 w-auto object-contain filter grayscale group-hover:grayscale-0 transition-all opacity-80 group-hover:opacity-100"
+                  className="h-6 w-auto object-contain max-w-[100px]"
                 />
               ) : (
-                <IconComponent className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <div className="w-7 h-7 rounded-lg bg-blue-50 text-[var(--brand-primary,#3B66D4)] flex items-center justify-center">
+                  <IconComponent className="w-4 h-4" />
+                </div>
               )}
-              <span className="text-sm font-bold text-slate-300 group-hover:text-white transition-colors">
-                {item.name}
-              </span>
+              <div className="flex flex-col text-left">
+                <span className="text-xs font-bold text-slate-800 group-hover:text-[var(--brand-primary,#3B66D4)] transition-colors">
+                  {item.name}
+                </span>
+                {item.subtitle && (
+                  <span className="text-[10px] text-slate-500 font-medium">
+                    {item.subtitle}
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}

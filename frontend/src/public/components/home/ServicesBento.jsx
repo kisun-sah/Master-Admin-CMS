@@ -102,7 +102,7 @@ export default function ServicesBento({ services = [] }) {
         );
 
   return (
-    <section className="py-24 bg-[#090D16] relative overflow-hidden" id="services">
+    <section className="py-24 bg-[#F8FAFC] relative overflow-hidden" id="services">
       {/* Background ambient glow */}
       <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
 

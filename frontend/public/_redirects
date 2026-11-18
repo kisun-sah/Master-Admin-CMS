@@ -1,0 +1,6 @@
+# Admin CMS SPA deep-link rewrites
+/admin/*    /admin.html   200
+/admin      /admin.html   200
+
+# Public Website SPA deep-link rewrite
+/*          /index.html   200

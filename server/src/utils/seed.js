@@ -170,7 +170,7 @@ export async function seedDatabase() {
       key: 'global',
       siteName: 'Apex Enterprise Solutions',
       siteTagline: 'Engineering Next-Generation Digital Experiences',
-      primaryColor: '#4F46E5',
+      primaryColor: '#3B66D4',
       secondaryColor: '#06B6D4',
       fontFamily: 'Inter',
       contactEmail: 'contact@apexsolutions.io',

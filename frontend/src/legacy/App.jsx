@@ -39,10 +39,10 @@ function ScrollToTop() {
   return null;
 }
 
-// Wrapper for Public Website Pages with Navbar, Footer, and Popup
+// Wrapper for Public Website Pages with Navbar, Footer, and Popup (Strictly Bright Daylight UI)
 function PublicSiteLayout({ children }) {
   return (
-    <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-slate-900 dark:bg-[#090D16] dark:text-slate-100 transition-colors duration-200">
+    <div className="flex flex-col min-h-screen bg-[#F8FAFC] text-slate-900 selection:bg-blue-600 selection:text-white font-sans">
       <ScrollToTop />
       <Navbar />
       <main className="flex-grow">{children}</main>
@@ -87,7 +87,39 @@ export default function App() {
                 }
               />
               <Route
+                path="/our-services"
+                element={
+                  <PublicSiteLayout>
+                    <ServicesPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/our-sevices"
+                element={
+                  <PublicSiteLayout>
+                    <ServicesPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
                 path="/services/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <ServiceDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/our-services/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <ServiceDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/our-sevices/:slug"
                 element={
                   <PublicSiteLayout>
                     <ServiceDetailPage />
@@ -103,7 +135,39 @@ export default function App() {
                 }
               />
               <Route
+                path="/portfolio"
+                element={
+                  <PublicSiteLayout>
+                    <GalleryPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/our-work"
+                element={
+                  <PublicSiteLayout>
+                    <GalleryPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
                 path="/gallery/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <GalleryDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/portfolio/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <GalleryDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/our-work/:slug"
                 element={
                   <PublicSiteLayout>
                     <GalleryDetailPage />
@@ -119,7 +183,39 @@ export default function App() {
                 }
               />
               <Route
+                path="/blogs"
+                element={
+                  <PublicSiteLayout>
+                    <BlogPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/blog-insights"
+                element={
+                  <PublicSiteLayout>
+                    <BlogPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
                 path="/blog/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <BlogDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/blogs/:slug"
+                element={
+                  <PublicSiteLayout>
+                    <BlogDetailPage />
+                  </PublicSiteLayout>
+                }
+              />
+              <Route
+                path="/blog-insights/:slug"
                 element={
                   <PublicSiteLayout>
                     <BlogDetailPage />

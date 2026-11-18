@@ -74,6 +74,8 @@ export async function getPublicSettings(req, res, next) {
         primaryColor: settings.primaryColor,
         secondaryColor: settings.secondaryColor,
         fontFamily: settings.fontFamily,
+        homepageSections: settings.homepageSections,
+        animationSettings: settings.animationSettings,
         seoDefaults: settings.seoDefaults,
       },
     });

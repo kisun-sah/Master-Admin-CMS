@@ -368,7 +368,7 @@ export function DashboardView({ onNavigate }) {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#4F46E5' }} />
+                <span style={{ width: 10, height: 10, borderRadius: '50%', background: 'var(--primary)' }} />
                 Content Mutations
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -466,7 +466,7 @@ export function DashboardView({ onNavigate }) {
                 <span style={{ color: 'var(--text-muted)' }}>100%</span>
               </div>
               <div style={{ height: '8px', background: 'var(--surface-hover)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: '100%', height: '100%', background: '#4F46E5' }} />
+                <div style={{ width: '100%', height: '100%', background: 'var(--primary)' }} />
               </div>
             </div>
 

@@ -27,6 +27,7 @@ export function PagesView() {
     slug: '',
     excerpt: '',
     featuredImage: '',
+    order: 0,
     status: 'draft',
     layout: 'default',
     placement: { showInHeader: false, showInFooter: false, isHomepage: false },
@@ -74,9 +75,10 @@ export function PagesView() {
       slug: '',
       excerpt: '',
       featuredImage: '',
+      order: pages.length + 1,
       status: 'draft',
       layout: 'default',
-      placement: { showInHeader: false, showInFooter: false, isHomepage: false },
+      placement: { showInHeader: true, showInFooter: true, isHomepage: false },
       blocks: [
         {
           type: 'rich_text',
@@ -100,6 +102,7 @@ export function PagesView() {
           slug: res.data.slug || '',
           excerpt: res.data.excerpt || '',
           featuredImage: res.data.featuredImage || '',
+          order: res.data.order ?? 0,
           status: res.data.status || 'draft',
           layout: res.data.layout || 'default',
           placement: res.data.placement || {},
@@ -189,6 +192,18 @@ export function PagesView() {
           <div style={{ fontWeight: 600 }}>{row.title}</div>
           <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/{row.slug}</div>
         </div>
+      ),
+    },
+    {
+      header: 'Order',
+      render: (row) => (
+        <span
+          className="badge badge-primary"
+          style={{ fontWeight: 700, padding: '3px 8px', fontSize: '12px' }}
+          title="Navigation Display Order"
+        >
+          #{row.order ?? 0}
+        </span>
       ),
     },
     {
@@ -323,7 +338,7 @@ export function PagesView() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
             <div className="form-group">
               <label className="form-label">Publication Status</label>
               <select
@@ -348,6 +363,24 @@ export function PagesView() {
                 <option value="landing">Full Landing Page</option>
                 <option value="full_width">Full Width Container</option>
               </select>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Menu Order (e.g. 1, 2...)</label>
+              <input
+                type="number"
+                min="0"
+                className="form-control"
+                placeholder="1"
+                value={formData.order ?? 0}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    order: parseInt(e.target.value, 10) || 0,
+                  })
+                }
+                title="Pages with lower order numbers appear first in the navbar"
+              />
             </div>
           </div>
 

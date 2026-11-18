@@ -19,8 +19,12 @@ export function resolveMediaUrl(url) {
   ) {
     return url;
   }
-  // Remove leading slash if any to normalize
   const cleanPath = url.startsWith('/') ? url : `/${url}`;
+  // In single-origin production deployment without explicit custom backend origin,
+  // relative paths (/uploads/...) route through same-origin reverse proxy, preventing HTTPS mixed content blocks.
+  if (import.meta.env.PROD && !import.meta.env.VITE_BACKEND_URL) {
+    return cleanPath;
+  }
   return `${BACKEND_ORIGIN}${cleanPath}`;
 }
 
@@ -84,6 +88,11 @@ export async function getServiceBySlug(slug) {
 }
 
 // 5. Dynamic CMS Pages (4 layouts, 9 block types)
+export async function getPublicPages(params = {}) {
+  const query = new URLSearchParams(params).toString();
+  return fetchJson(`/pages${query ? `?${query}` : ''}`);
+}
+
 export async function getPageBySlug(slug) {
   return fetchJson(`/pages/${slug}`);
 }

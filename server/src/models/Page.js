@@ -72,6 +72,11 @@ const pageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    order: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
     placement: {
       showInHeader: { type: Boolean, default: false },
       showInFooter: { type: Boolean, default: false },

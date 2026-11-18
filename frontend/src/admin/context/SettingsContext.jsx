@@ -10,7 +10,7 @@ const DEFAULT_BRANDING = {
   logo: '',
   darkLogo: '',
   favicon: '',
-  primaryColor: '#4F46E5',
+  primaryColor: '#3B66D4',
   secondaryColor: '#06B6D4',
   fontFamily: 'Inter',
 };
@@ -94,29 +94,46 @@ function updateFavicon(faviconUrl) {
 export function applyThemeToDom(theme) {
   if (!theme) return;
   const root = document.documentElement;
+  const body = typeof document !== 'undefined' ? document.body : null;
+
+  const normalizeHex = (c, fallback) => {
+    if (!c || typeof c !== 'string') return fallback;
+    const clean = c.trim();
+    if (clean.startsWith('#')) return clean;
+    if (/^[0-9A-Fa-f]{3,8}$/.test(clean)) return `#${clean}`;
+    return clean;
+  };
 
   // 1. Primary brand color tokens
-  const primary = theme.primaryColor || DEFAULT_BRANDING.primaryColor;
-  if (/^#([0-9A-Fa-f]{3}){1,2}$/.test(primary)) {
-    root.style.setProperty('--primary', primary);
-    root.style.setProperty('--border-focus', primary);
+  const primary = normalizeHex(theme.primaryColor, DEFAULT_BRANDING.primaryColor);
+  const primaryDark = adjustColorBrightness(primary, -15);
+  const rgb = hexToRgb(primary);
+  const primaryLight = rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)` : 'rgba(59, 102, 212, 0.12)';
 
-    // Compute hover/active darker tone
-    const primaryDark = adjustColorBrightness(primary, -15);
-    root.style.setProperty('--primary-dark', primaryDark);
+  // 2. Secondary/Accent color tokens
+  const accent = normalizeHex(theme.secondaryColor, DEFAULT_BRANDING.secondaryColor);
+  const accentRgb = hexToRgb(accent);
+  const accentLight = accentRgb ? `rgba(${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}, 0.15)` : 'rgba(6, 182, 212, 0.12)';
 
-    // Compute light background tint for active sidebar items & badges
-    const rgb = hexToRgb(primary);
-    if (rgb) {
-      root.style.setProperty('--primary-light', `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.12)`);
-    }
-  }
+  // Apply to BOTH root (html) and body to guarantee absolute override
+  const targets = [root, body].filter(Boolean);
+  targets.forEach((target) => {
+    target.style.setProperty('--primary', primary);
+    target.style.setProperty('--brand-primary', primary);
+    target.style.setProperty('--border-focus', primary);
+    target.style.setProperty('--primary-dark', primaryDark);
+    target.style.setProperty('--primary-light', primaryLight);
+    target.style.setProperty('--accent', accent);
+    target.style.setProperty('--brand-secondary', accent);
+    target.style.setProperty('--secondary', accent);
+    target.style.setProperty('--accent-light', accentLight);
+  });
 
-  // 2. Secondary/Accent color
-  const accent = theme.secondaryColor || DEFAULT_BRANDING.secondaryColor;
-  if (/^#([0-9A-Fa-f]{3}){1,2}$/.test(accent)) {
-    root.style.setProperty('--accent', accent);
-  }
+  // Cache in localStorage for zero-flash page loads
+  try {
+    localStorage.setItem('master_cms_primary_color', primary);
+    localStorage.setItem('master_cms_secondary_color', accent);
+  } catch (e) {}
 
   // 3. Typography font family
   const font = theme.fontFamily || DEFAULT_BRANDING.fontFamily;
@@ -124,7 +141,7 @@ export function applyThemeToDom(theme) {
     ensureGoogleFont(font);
     const fontStack = `'${font}', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
     root.style.setProperty('--font-family', fontStack);
-    document.body.style.fontFamily = fontStack;
+    if (body) body.style.fontFamily = fontStack;
   }
 
   // 4. Favicon
@@ -136,6 +153,20 @@ export function applyThemeToDom(theme) {
     if (!currentTitle || currentTitle.includes('Master Admin CMS') || currentTitle.includes('Admin Panel')) {
       document.title = `${theme.siteName} — Admin Panel`;
     }
+  }
+
+  // 6. Broadcast event so public site / CmsContext synchronously updates in real-time
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent('cms:branding-updated', {
+        detail: {
+          primaryColor: primary,
+          secondaryColor: accent,
+          fontFamily: font,
+          ...theme,
+        },
+      })
+    );
   }
 }
 

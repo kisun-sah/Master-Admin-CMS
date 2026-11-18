@@ -68,17 +68,17 @@ export default function HeroSection({ sliders = [] }) {
             )}
             <source src={resolveMediaUrl(slide.mediaUrl)} type="video/mp4" />
           </video>
-          {/* Obsidian dark overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#090D16]/90 via-[#090D16]/80 to-[#090D16]" />
+          {/* Dark overlay gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950/80" />
         </div>
       ) : hasImageBg ? (
         <div className="absolute inset-0 z-0 overflow-hidden">
           <img
             src={resolveMediaUrl(slide.mediaUrl)}
             alt={slide.title}
-            className="w-full h-full object-cover opacity-20 filter blur-[2px]"
+            className="w-full h-full object-cover opacity-30 filter blur-[1px]"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#090D16]/90 via-[#090D16]/80 to-[#090D16]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950/80" />
         </div>
       ) : (
         /* Atmospheric gradient glow orbs */
@@ -147,7 +147,7 @@ export default function HeroSection({ sliders = [] }) {
                   alt="Full-Stack Engineer & IT Specialist"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#090D16] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent opacity-60" />
               </div>
 
               {/* Status Ring Indicator */}

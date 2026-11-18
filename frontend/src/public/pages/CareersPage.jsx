@@ -4,12 +4,10 @@ import { getCareers } from '../lib/api';
 import SEOHead from '../components/layout/SEOHead';
 import {
   Sparkles,
-  Briefcase,
   MapPin,
   Clock,
   ArrowRight,
   DollarSign,
-  Calendar,
 } from 'lucide-react';
 
 export default function CareersPage() {
@@ -42,7 +40,7 @@ export default function CareersPage() {
       salaryRange: '$4,000 - $6,500 / mo',
       applicationDeadline: '2026-12-31',
       description:
-        'Help us build high-performance public client web portals, dynamic CMS block renderers, and modern glassmorphic web apps.',
+        'Help us build high-performance public client web portals, dynamic CMS block renderers, and modern responsive web apps.',
     },
     {
       title: 'Junior IT Systems & Cloud Assistant',
@@ -53,7 +51,7 @@ export default function CareersPage() {
       salaryRange: '$1,500 - $2,500 / mo',
       applicationDeadline: '2026-11-30',
       description:
-        'Collaborate with our Lead IT Officer managing AWS deployments, monitoring system uptime, and configuring domain DNS and automated backups.',
+        'Collaborate with our Lead IT Officer managing cloud deployments, monitoring system uptime, and configuring domain DNS and automated backups.',
     },
     {
       title: 'Digital Marketing & Content Specialist',
@@ -64,7 +62,7 @@ export default function CareersPage() {
       salaryRange: '$2,000 - $3,500 / mo',
       applicationDeadline: '2026-12-15',
       description:
-        'Craft SEO-optimized engineering blog posts, manage client PPC campaigns across Google and Meta, and run conversion funnels.',
+        'Produce technical case studies, drive client SEO strategy, manage multi-channel PPC campaigns, and optimize conversion rate metrics.',
     },
   ];
 
@@ -86,7 +84,7 @@ export default function CareersPage() {
   });
 
   return (
-    <div className="pt-28 pb-20 bg-[#090D16] min-h-screen">
+    <div className="pt-28 pb-20 bg-[#F8FAFC] min-h-screen">
       <SEOHead
         title="Careers & Freelance Collaborations — Join Our Studio"
         description="Explore open engineering, digital marketing, and IT officer opportunities. Work on cutting-edge MERN applications and high-impact digital products."
@@ -95,14 +93,14 @@ export default function CareersPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Join Our Growth Engine</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
             Careers & Freelance Collaborations
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-400">
+          <p className="mt-4 text-base sm:text-lg text-slate-600">
             We are actively looking for talented developers, designers, and marketing specialists to collaborate on bespoke client projects.
           </p>
         </div>
@@ -112,11 +110,12 @@ export default function CareersPage() {
           {departments.map((dept) => (
             <button
               key={dept}
+              type="button"
               onClick={() => setDepartmentFilter(dept)}
               className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                 departmentFilter === dept
-                  ? 'btn-primary-glow shadow-neon-cyan text-white'
-                  : 'glass-panel text-slate-300 hover:text-white'
+                  ? 'bg-[var(--brand-primary,#3B66D4)] text-white shadow-md shadow-blue-500/25'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
               }`}
             >
               {dept}
@@ -129,35 +128,35 @@ export default function CareersPage() {
           {filtered.map((job, idx) => (
             <div
               key={idx}
-              className="glass-card rounded-2xl p-6 sm:p-8 border border-white/10 hover:border-cyan-500/40 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
+              className="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6"
             >
               <div className="space-y-3 flex-1">
-                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-400 text-xs font-bold">
+                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-md bg-blue-50 text-[var(--brand-primary,#3B66D4)] text-xs font-bold border border-blue-100">
                   {job.department || 'Engineering'}
                 </div>
 
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-slate-900">
                   {job.title}
                 </h3>
 
-                <p className="text-xs sm:text-sm text-slate-400 line-clamp-2">
+                <p className="text-xs sm:text-sm text-slate-600 line-clamp-2">
                   {job.description}
                 </p>
 
-                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500 pt-1">
                   <span className="flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                    <MapPin className="w-3.5 h-3.5 text-[var(--brand-primary,#3B66D4)]" />
                     <span>{job.workMode || 'Remote'}</span>
                   </span>
                   <span>•</span>
                   <span className="flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-cyan-400" />
+                    <Clock className="w-3.5 h-3.5 text-[var(--brand-primary,#3B66D4)]" />
                     <span>{job.employmentType || 'Contract / Full-time'}</span>
                   </span>
                   {job.salaryRange && (
                     <>
                       <span>•</span>
-                      <span className="flex items-center gap-1.5 text-emerald-400 font-medium">
+                      <span className="flex items-center gap-1.5 text-emerald-600 font-bold">
                         <DollarSign className="w-3.5 h-3.5" />
                         <span>{job.salaryRange}</span>
                       </span>
@@ -168,7 +167,7 @@ export default function CareersPage() {
 
               <Link
                 to={`/careers/${job.slug}`}
-                className="px-6 py-3 rounded-full btn-primary-glow font-bold text-xs sm:text-sm shrink-0 inline-flex items-center gap-2 shadow-neon-cyan"
+                className="px-6 py-3 rounded-full bg-[var(--brand-primary,#3B66D4)] hover:bg-blue-700 text-white font-bold text-xs sm:text-sm shrink-0 inline-flex items-center gap-2 shadow-md shadow-blue-500/25 transition-transform hover:scale-105 active:scale-95"
               >
                 <span>View Role & Apply</span>
                 <ArrowRight className="w-4 h-4" />
@@ -177,7 +176,7 @@ export default function CareersPage() {
           ))}
 
           {filtered.length === 0 && (
-            <div className="text-center py-16 text-slate-400 glass-card rounded-2xl border border-white/5">
+            <div className="text-center py-16 text-slate-500 bg-white rounded-2xl border border-slate-200">
               No open roles found in this category right now. You can still reach out via our contact page!
             </div>
           )}

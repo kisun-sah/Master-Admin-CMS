@@ -1,6 +1,6 @@
 import express from 'express';
 import { getPublicSettings } from '../controllers/settingsController.js';
-import { getPublicPageBySlug } from '../controllers/pagesController.js';
+import { getPublicPageBySlug, getPublicPages } from '../controllers/pagesController.js';
 import { Service } from '../models/Service.js';
 import { BlogPost } from '../models/BlogPost.js';
 import { Slider } from '../models/Slider.js';
@@ -39,7 +39,8 @@ router.get('/navigation', async (req, res, next) => {
   }
 });
 
-// Pages
+// Pages (published only)
+router.get('/pages', getPublicPages);
 router.get('/pages/:slug', getPublicPageBySlug);
 
 // Services (published only)
@@ -67,7 +68,7 @@ router.get('/services/:slug', async (req, res, next) => {
 });
 
 // Blogs (published only)
-router.get('/blogs', async (req, res, next) => {
+const getBlogsHandler = async (req, res, next) => {
   try {
     const blogs = await BlogPost.find({ status: 'published', isDeleted: false })
       .select('title slug excerpt featuredImage authorName category tags readingTimeMinutes publishDate seo')
@@ -76,9 +77,9 @@ router.get('/blogs', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
 
-router.get('/blogs/:slug', async (req, res, next) => {
+const getBlogBySlugHandler = async (req, res, next) => {
   try {
     const post = await BlogPost.findOne({ slug: req.params.slug, status: 'published', isDeleted: false })
       .select('-isDeleted');
@@ -89,7 +90,12 @@ router.get('/blogs/:slug', async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-});
+};
+
+router.get('/blogs', getBlogsHandler);
+router.get('/blog', getBlogsHandler);
+router.get('/blogs/:slug', getBlogBySlugHandler);
+router.get('/blog/:slug', getBlogBySlugHandler);
 
 // Sliders (active only)
 router.get('/sliders', async (req, res, next) => {

@@ -1,322 +1,307 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../../context/CmsContext';
-import { useTheme } from '../../context/ThemeContext';
 import { resolveMediaUrl } from '../../lib/api';
 import {
   Code2,
   Mail,
   Phone,
   MapPin,
-  Github,
-  Linkedin,
-  Twitter,
+  Clock,
   Facebook,
+  Twitter,
   Instagram,
+  Linkedin,
   Youtube,
+  Github,
   MessageCircle,
   ExternalLink,
-  ShieldCheck,
-  Zap,
+  ArrowRight,
 } from 'lucide-react';
 
 export default function Footer() {
-  const { settings, navigation } = useCms();
-  const { isDark } = useTheme();
+  const { settings, navigation, pages } = useCms();
 
-  // Dynamic columns from CMS navigation
   const col1 = navigation?.find((m) => m.location === 'footer_col_1');
   const col2 = navigation?.find((m) => m.location === 'footer_col_2');
-  const col3 = navigation?.find((m) => m.location === 'footer_col_3');
   const legal = navigation?.find((m) => m.location === 'legal_links');
 
-  // Fallback columns if none seeded yet
-  const defaultCol1 = {
-    title: 'Services & Solutions',
-    items: [
-      { label: 'Custom Websites & CMS', url: '/services' },
-      { label: 'AI Chatbots & Automation', url: '/services' },
-      { label: 'Digital Marketing & SEO', url: '/services' },
-      { label: 'IT Officer Consulting', url: '/services' },
-      { label: 'Cloud & Server Architecture', url: '/services' },
-    ],
-  };
+  const defaultServices = [
+    { label: 'Full-Stack Web & CMS', url: '/services/full-stack-web-cms' },
+    { label: 'AI Chatbots & Automation', url: '/services/ai-automation' },
+    { label: 'Digital Marketing & SEO', url: '/services/digital-marketing' },
+    { label: 'IT Officer & Cloud Support', url: '/services/it-officer-cloud' },
+    { label: 'Cybersecurity Hardening', url: '/services/cybersecurity' },
+  ];
 
-  const defaultCol2 = {
-    title: 'Website Templates',
-    items: [
-      { label: 'E-Commerce Websites', url: '/gallery' },
-      { label: 'Hospital & Clinic Portals', url: '/gallery' },
-      { label: 'School & College Systems', url: '/gallery' },
-      { label: 'Travel & Booking Platforms', url: '/gallery' },
-      { label: 'Corporate CMS Websites', url: '/gallery' },
-    ],
-  };
+  const footerPages = Array.isArray(pages)
+    ? pages
+        .filter((p) => (!p.status || p.status === 'published') && p.placement?.showInFooter)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+        .map((p) => ({
+          label: p.title,
+          url: `/${p.slug.replace(/^\//, '')}`,
+        }))
+    : [];
 
-  const defaultCol3 = {
-    title: 'Studio & Insights',
-    items: [
-      { label: 'About & IT Pedigree', url: '/about' },
-      { label: 'Tech & Marketing Blog', url: '/blog' },
-      { label: 'Careers & Collaborations', url: '/careers' },
-      { label: 'Order Website / Hire Me', url: '/contact' },
-      { label: 'Sitemap XML', url: '/sitemap.xml', target: '_blank' },
-    ],
-  };
+  const defaultQuickLinks = [
+    { label: 'Home', url: '/' },
+    { label: 'About Us', url: '/about-us' },
+    { label: 'Our Services', url: '/services' },
+    { label: 'Our Work / Portfolio', url: '/portfolio' },
+    { label: 'Blogs & Insights', url: '/blog' },
+    { label: 'Contact Us', url: '/contact' },
+  ];
 
-  const activeCol1 = col1?.items?.length ? col1 : defaultCol1;
-  const activeCol2 = col2?.items?.length ? col2 : defaultCol2;
-  const activeCol3 = col3?.items?.length ? col3 : defaultCol3;
+  const mergedQuickLinks = [...defaultQuickLinks];
+  if (footerPages.length > 0) {
+    footerPages.forEach((fp) => {
+      if (!mergedQuickLinks.some((l) => l.url.toLowerCase() === fp.url.toLowerCase())) {
+        mergedQuickLinks.push(fp);
+      }
+    });
+  }
 
-  const currentLogo = isDark
-    ? settings?.darkLogo || settings?.logo
-    : settings?.logo || settings?.darkLogo;
+  const servicesList = col1?.items?.length ? col1.items : defaultServices;
+  const quickLinksList = col2?.items?.length ? col2.items : mergedQuickLinks;
 
-  // Clean WhatsApp phone number for click-to-chat
-  const whatsappNumber = settings?.contactPhone
-    ? settings.contactPhone.replace(/[^0-9]/g, '')
-    : '15550192834';
+  const phone = settings?.contactPhone || '01-4546038';
+  const email = settings?.contactEmail || 'info@globalhelpfoundation.org.np';
+  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  const socials = settings?.socialLinks || {};
 
   return (
-    <footer className="relative bg-[#070A10] border-t border-white/10 text-slate-300 pt-16 pb-12 overflow-hidden">
-      {/* Background ambient neon glow */}
-      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-[128px] pointer-events-none" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 pb-12 border-b border-white/10">
-          {/* Brand Info (2 Columns wide on LG) */}
-          <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="flex items-center gap-3">
-              {currentLogo ? (
-                <img
-                  src={resolveMediaUrl(currentLogo)}
-                  alt={settings?.siteName || 'Logo'}
-                  className="h-9 w-auto object-contain"
-                />
+    <footer
+      className="relative bg-[#1E3A8A] text-white pt-16 pb-10 border-t-4"
+      style={{ borderTopColor: 'var(--brand-secondary, #06B6D4)' }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-white/15">
+          {/* ================= COLUMN 1: BRAND LOGO & BIO ================= */}
+          <div className="space-y-4">
+            <Link to="/" className="inline-block">
+              {settings?.logo ? (
+                <div className="bg-white p-2 rounded-xl inline-block shadow-sm">
+                  <img
+                    src={resolveMediaUrl(settings.logo)}
+                    alt={settings.siteName || 'Logo'}
+                    className="h-10 w-auto max-w-[160px] object-contain"
+                  />
+                </div>
               ) : (
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white">
-                  <Code2 className="w-5 h-5" />
+                <div className="w-12 h-12 rounded-xl bg-white text-[#1E3A8A] flex items-center justify-center font-black text-xl shadow-md">
+                  <Code2 className="w-7 h-7" />
                 </div>
               )}
-              <span className="font-extrabold text-xl text-white tracking-tight">
-                {settings?.siteName || 'NEXUS DEVS'}
-              </span>
             </Link>
 
-            <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+            <h3 className="font-extrabold text-base tracking-tight text-white">
+              {settings?.siteName || 'GLOBAL SERVICE TRAVEL & IT SOLUTIONS'}
+            </h3>
+
+            <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
               {settings?.footerDescription ||
-                'Personal IT, Full-Stack MERN Development, AI Automation & Digital Marketing Studio. Building high-converting websites and scalable digital growth systems for modern businesses.'}
+                'Empowering modern businesses with custom high-converting web applications, Master Admin CMS, enterprise AI automation, and ROI-driven marketing.'}
             </p>
 
-            {/* Direct Contact Details */}
-            <div className="space-y-2 pt-2 text-sm text-slate-400">
-              {settings?.contactEmail && (
+            {/* Social Media Row with Square Borders */}
+            <div className="flex items-center gap-2 pt-2">
+              {socials.facebook && (
                 <a
-                  href={`mailto:${settings.contactEmail}`}
-                  className="flex items-center gap-2 hover:text-cyan-400 transition-colors"
-                >
-                  <Mail className="w-4 h-4 text-cyan-400" />
-                  <span>{settings.contactEmail}</span>
-                </a>
-              )}
-              {settings?.contactPhone && (
-                <a
-                  href={`tel:${settings.contactPhone}`}
-                  className="flex items-center gap-2 hover:text-cyan-400 transition-colors"
-                >
-                  <Phone className="w-4 h-4 text-cyan-400" />
-                  <span>{settings.contactPhone}</span>
-                </a>
-              )}
-              {settings?.address && (
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                  <span>{settings.address}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Social Icons */}
-            <div className="flex items-center gap-3 pt-3">
-              {settings?.socialLinks?.github && (
-                <a
-                  href={settings.socialLinks.github}
+                  href={socials.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
-                  aria-label="GitHub"
-                >
-                  <Github className="w-4 h-4" />
-                </a>
-              )}
-              {settings?.socialLinks?.linkedin && (
-                <a
-                  href={settings.socialLinks.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-              )}
-              {settings?.socialLinks?.twitter && (
-                <a
-                  href={settings.socialLinks.twitter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="w-4 h-4" />
-                </a>
-              )}
-              {settings?.socialLinks?.facebook && (
-                <a
-                  href={settings.socialLinks.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
                   aria-label="Facebook"
                 >
                   <Facebook className="w-4 h-4" />
                 </a>
               )}
-              {settings?.socialLinks?.instagram && (
+              {socials.twitter && (
                 <a
-                  href={settings.socialLinks.instagram}
+                  href={socials.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
+                  aria-label="Twitter / X"
+                >
+                  <Twitter className="w-4 h-4" />
+                </a>
+              )}
+              {socials.instagram && (
+                <a
+                  href={socials.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
-              {settings?.socialLinks?.youtube && (
+              {socials.linkedin && (
                 <a
-                  href={settings.socialLinks.youtube}
+                  href={socials.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-9 h-9 rounded-lg bg-slate-800/80 hover:bg-cyan-500 hover:text-black flex items-center justify-center text-slate-300 transition-all"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              )}
+              {socials.youtube && (
+                <a
+                  href={socials.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
                   aria-label="YouTube"
                 >
                   <Youtube className="w-4 h-4" />
                 </a>
               )}
+              {socials.github && (
+                <a
+                  href={socials.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-8 h-8 rounded-lg border border-white/30 hover:border-white bg-white/10 hover:bg-white hover:text-[#1E3A8A] flex items-center justify-center text-white transition-all"
+                  aria-label="GitHub"
+                >
+                  <Github className="w-4 h-4" />
+                </a>
+              )}
             </div>
           </div>
 
-          {/* Column 1: Services */}
+          {/* ================= COLUMN 2: TOP SERVICES ================= */}
           <div>
-            <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              {activeCol1.title || 'Services'}
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              {activeCol1.items.map((item, idx) => (
+            <h4 className="text-sm font-extrabold text-white tracking-wider uppercase mb-5 pb-2 border-b border-white/20 inline-block">
+              Top Services & Solutions
+            </h4>
+            <ul className="space-y-3 text-xs sm:text-sm">
+              {servicesList.map((item, idx) => (
                 <li key={idx}>
                   <Link
                     to={item.url}
-                    className="text-slate-400 hover:text-cyan-400 transition-colors"
+                    className="text-blue-100 hover:text-white hover:underline transition-colors flex items-center gap-1.5"
                   >
-                    {item.label}
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span>{item.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 2: Website Templates */}
+          {/* ================= COLUMN 3: QUICK LINKS ================= */}
           <div>
-            <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              {activeCol2.title || 'Templates & Portals'}
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              {activeCol2.items.map((item, idx) => (
+            <h4 className="text-sm font-extrabold text-white tracking-wider uppercase mb-5 pb-2 border-b border-white/20 inline-block">
+              Quick Links & Resources
+            </h4>
+            <ul className="space-y-3 text-xs sm:text-sm">
+              {quickLinksList.map((item, idx) => (
                 <li key={idx}>
                   <Link
                     to={item.url}
-                    className="text-slate-400 hover:text-cyan-400 transition-colors"
+                    className="text-blue-100 hover:text-white hover:underline transition-colors flex items-center gap-1.5"
                   >
-                    {item.label}
+                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                    <span>{item.label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Column 3: Studio & Insights */}
-          <div>
-            <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-4">
-              {activeCol3.title || 'Explore Studio'}
-            </h3>
-            <ul className="space-y-2.5 text-sm">
-              {activeCol3.items.map((item, idx) => (
-                <li key={idx}>
-                  <Link
-                    to={item.url}
-                    target={item.target || '_self'}
-                    className="text-slate-400 hover:text-cyan-400 transition-colors"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          {/* ================= COLUMN 4: CONTACT INFO + LIVE GOOGLE MAP ================= */}
+          <div className="space-y-4">
+            <h4 className="text-sm font-extrabold text-white tracking-wider uppercase mb-5 pb-2 border-b border-white/20 inline-block">
+              Contact & Location
+            </h4>
+
+            <div className="space-y-2 text-xs sm:text-sm text-blue-100">
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-cyan-300 flex-shrink-0" />
+                <a href={`tel:${cleanPhone}`} className="hover:text-white">
+                  {phone}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-cyan-300 flex-shrink-0" />
+                <a href={`mailto:${email}`} className="hover:text-white truncate">
+                  {email}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-cyan-300 flex-shrink-0" />
+                <span>Sun – Fri: 10:00 AM – 6:00 PM</span>
+              </div>
+            </div>
+
+            {/* Quick Consultation CTA */}
+            <Link
+              to="/contact"
+              className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md hover:shadow-lg transition-all text-white mt-1"
+              style={{ backgroundColor: 'var(--brand-secondary, #06B6D4)' }}
+            >
+              <span>Get a Free Consultation</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+
+            {/* Embedded Live Google Map Card */}
+            {settings?.mapEmbedUrl && (
+              <div className="rounded-xl overflow-hidden shadow-lg h-36 w-full border-2 border-white/20 mt-3">
+                <iframe
+                  title="Office Location Map"
+                  src={settings.mapEmbedUrl}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            )}
           </div>
         </div>
 
-        {/* Bottom Sub-Footer: Copyright + Legal Links */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        {/* ================= BOTTOM COPYRIGHT BAR ================= */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-blue-200">
           <div>
             {settings?.copyrightText ||
-              `© ${new Date().getFullYear()} NEXUS DEVS. 100% Dynamic Master Admin CMS Architecture.`}
+              `© ${new Date().getFullYear()} Global Service Travel & IT Solutions. Powered 100% Dynamically by Master Admin CMS.`}
           </div>
 
           <div className="flex items-center gap-6">
-            {legal?.items?.length ? (
-              legal.items.map((item, idx) => (
-                <Link
-                  key={idx}
-                  to={item.url}
-                  className="hover:text-slate-300 transition-colors"
-                >
-                  {item.label}
-                </Link>
-              ))
-            ) : (
-              <>
-                <Link to="/pages/privacy-policy" className="hover:text-slate-300 transition-colors">
-                  Privacy Policy
-                </Link>
-                <Link to="/pages/terms" className="hover:text-slate-300 transition-colors">
-                  Terms of Service
-                </Link>
-                <a href="/robots.txt" target="_blank" className="hover:text-slate-300 transition-colors">
-                  Robots Directives
-                </a>
-                <a href="/sitemap.xml" target="_blank" className="hover:text-slate-300 transition-colors">
-                  XML Sitemap
-                </a>
-              </>
-            )}
+            <Link to="/about" className="hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/about" className="hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link to="/contact" className="hover:text-white transition-colors">
+              Help Center
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* Floating Direct WhatsApp Action Pill */}
-      {settings?.contactPhone && (
-        <a
-          href={`https://wa.me/${whatsappNumber}?text=Hi!%20I'm%20interested%20in%20ordering%20a%20website%20or%20IT%20services.`}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Chat on WhatsApp"
-          className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold text-sm shadow-2xl shadow-emerald-500/50 hover:scale-105 transition-all"
-        >
-          <MessageCircle className="w-5 h-5" />
-          <span className="hidden sm:inline">Chat on WhatsApp</span>
-        </a>
-      )}
+      {/* Floating Direct WhatsApp CTA Button */}
+      <a
+        href={`https://wa.me/${cleanPhone}?text=Hello!%20I'm%20interested%20in%20your%20IT,%20Web%20Development%20&%20Digital%20Services.`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Direct WhatsApp Chat"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2.5 px-4 py-3 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-sm shadow-2xl shadow-emerald-500/50 hover:scale-105 active:scale-95 transition-all"
+      >
+        <MessageCircle className="w-5 h-5 fill-current" />
+        <span className="hidden sm:inline">WhatsApp Us</span>
+      </a>
     </footer>
   );
 }

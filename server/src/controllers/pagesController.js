@@ -18,14 +18,16 @@ export async function listPages(req, res, next) {
       ];
     }
 
-    const sortField = req.query.sortBy || 'updatedAt';
-    const sortOrder = req.query.sortOrder === 'asc' ? 1 : -1;
-    const sort = { [sortField]: sortOrder };
+    const sortField = req.query.sortBy || 'order';
+    const sortOrder = req.query.sortOrder === 'desc' ? -1 : 1;
+    const sort = req.query.sortBy
+      ? { [sortField]: sortOrder }
+      : { order: 1, createdAt: 1 };
 
     const [total, pages] = await Promise.all([
       Page.countDocuments(filter),
       Page.find(filter)
-        .select('title slug status publishDate placement layout updatedAt createdAt author')
+        .select('title slug status publishDate placement layout order updatedAt createdAt author')
         .populate('author', 'displayName email')
         .sort(sort)
         .skip(skip)
@@ -69,13 +71,51 @@ export async function getPageById(req, res, next) {
   }
 }
 
+export async function getPublicPages(req, res, next) {
+  try {
+    const filter = { status: 'published', isDeleted: false };
+    if (req.query.header === 'true') {
+      filter['placement.showInHeader'] = true;
+    }
+    if (req.query.footer === 'true') {
+      filter['placement.showInFooter'] = true;
+    }
+    const pages = await Page.find(filter)
+      .select('title slug excerpt featuredImage placement layout publishDate order status blocks seo')
+      .sort({ order: 1, createdAt: 1 });
+
+    res.status(200).json({
+      success: true,
+      data: pages,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function getPublicPageBySlug(req, res, next) {
   try {
-    const page = await Page.findOne({
-      slug: req.params.slug.toLowerCase().trim(),
+    const rawSlug = (req.params.slug || '').toLowerCase().trim();
+    let page = await Page.findOne({
+      slug: rawSlug,
       status: 'published',
       isDeleted: false,
     }).select('-isDeleted');
+
+    // Handle common slug aliases e.g. 'about' <-> 'about-us'
+    if (!page && rawSlug === 'about') {
+      page = await Page.findOne({
+        slug: 'about-us',
+        status: 'published',
+        isDeleted: false,
+      }).select('-isDeleted');
+    } else if (!page && rawSlug === 'about-us') {
+      page = await Page.findOne({
+        slug: 'about',
+        status: 'published',
+        isDeleted: false,
+      }).select('-isDeleted');
+    }
 
     if (!page) {
       return res.status(404).json({
@@ -95,7 +135,7 @@ export async function getPublicPageBySlug(req, res, next) {
 
 export async function createPage(req, res, next) {
   try {
-    const { title, slug, excerpt, featuredImage, blocks, placement, layout, seo, status } = req.body;
+    const { title, slug, excerpt, featuredImage, blocks, placement, layout, seo, status, order } = req.body;
 
     if (!title) {
       return res.status(400).json({
@@ -126,6 +166,7 @@ export async function createPage(req, res, next) {
       layout: layout || 'default',
       seo: seo || {},
       status: status || 'draft',
+      order: Number(order) || 0,
       author: req.user?._id,
     });
 
@@ -155,7 +196,7 @@ export async function updatePage(req, res, next) {
       });
     }
 
-    const { title, slug, excerpt, featuredImage, blocks, placement, layout, seo, status } = req.body;
+    const { title, slug, excerpt, featuredImage, blocks, placement, layout, seo, status, order } = req.body;
 
     if (slug && slug !== page.slug) {
       const normalizedSlug = slug.toLowerCase().trim();
@@ -181,6 +222,7 @@ export async function updatePage(req, res, next) {
     if (layout !== undefined) page.layout = layout;
     if (seo !== undefined) page.seo = seo;
     if (status) page.status = status;
+    if (order !== undefined) page.order = Number(order) || 0;
 
     await page.save();
 

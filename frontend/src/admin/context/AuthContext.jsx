@@ -37,6 +37,16 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     checkAuth();
+
+    const handleAuthExpired = () => {
+      setUser(null);
+      addToast('Your session has expired. Please sign in again.', 'warning');
+    };
+
+    window.addEventListener('cms:auth-expired', handleAuthExpired);
+    return () => {
+      window.removeEventListener('cms:auth-expired', handleAuthExpired);
+    };
   }, []);
 
   const login = async (email, password) => {

@@ -76,7 +76,7 @@ const siteSettingsSchema = new mongoose.Schema(
     },
     primaryColor: {
       type: String,
-      default: '#4F46E5', // Indigo token
+      default: '#3B66D4', // Royal Blue token
     },
     secondaryColor: {
       type: String,
@@ -85,6 +85,22 @@ const siteSettingsSchema = new mongoose.Schema(
     fontFamily: {
       type: String,
       default: 'Inter',
+    },
+    homepageSections: [
+      {
+        id: { type: String, required: true },
+        name: { type: String, default: '' },
+        enabled: { type: Boolean, default: true },
+        order: { type: Number, default: 0 },
+        animation: { type: String, default: 'fade-up' },
+      },
+    ],
+    animationSettings: {
+      enabled: { type: Boolean, default: true },
+      defaultPreset: { type: String, default: 'fade-up' },
+      duration: { type: Number, default: 0.55 },
+      delay: { type: Number, default: 0 },
+      staggerDelay: { type: Number, default: 0.08 },
     },
     seoDefaults: {
       metaTitle: { type: String, default: 'Master Corporate CMS' },

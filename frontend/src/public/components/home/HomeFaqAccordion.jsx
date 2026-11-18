@@ -1,40 +1,17 @@
 import React, { useState } from 'react';
-import { ChevronDown, Sparkles, HelpCircle } from 'lucide-react';
+import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
+import { DEFAULT_CMS_FALLBACKS } from '../../config/defaultCmsFallbacks';
 
 export default function HomeFaqAccordion({ faqs = [] }) {
   const [openIdx, setOpenIdx] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  const defaultFaqs = [
-    {
-      question: 'Do I get an Admin Panel to edit my website content after delivery?',
-      answer:
-        'Yes, 100%! Every custom website we deliver is powered by our proprietary Master Admin CMS. You receive full superadmin access to manage pages, blocks, services, photo galleries, tech blogs, video hero reels, site settings, and SEO without writing a single line of code.',
-      category: 'General',
-    },
-    {
-      question: 'How long does it take to build and deploy a custom business website?',
-      answer:
-        'Starter and business template deployments take 3 to 7 business days. Complex custom portals (e-commerce with payment gateways, healthcare booking, hospital management, or university systems) take 2 to 4 weeks depending on the required integrations.',
-      category: 'Services',
-    },
-    {
-      question: 'Can you handle server hosting, domain DNS, and 24/7 IT maintenance?',
-      answer:
-        'Absolutely. As a dedicated IT Officer and Cloud Engineer, we offer fully managed cloud hosting (AWS, DigitalOcean, or private VPS) complete with SSL certificates, automated daily backups, firewall defense, and guaranteed 99.9% uptime SLAs.',
-      category: 'Technical',
-    },
-    {
-      question: 'What is included in your Monthly Digital Marketing & SEO packages?',
-      answer:
-        'Our packages include end-to-end Technical SEO optimization (100/100 Core Web Vitals, dynamic sitemaps, structured schema data), high-converting landing page optimization, Google Search Ads (PPC), Meta Ads funnels, and transparent monthly ROI reports.',
-      category: 'Billing',
-    },
+  const items = faqs && faqs.length > 0 ? faqs : DEFAULT_CMS_FALLBACKS.faqs;
+
+  const categories = [
+    'All',
+    ...Array.from(new Set(items.map((f) => f.category || 'General'))),
   ];
-
-  const items = faqs && faqs.length > 0 ? faqs : defaultFaqs;
-
-  const categories = ['All', ...new Set(items.map((f) => f.category || 'General'))];
 
   const filtered =
     selectedCategory === 'All'
@@ -49,17 +26,17 @@ export default function HomeFaqAccordion({ faqs = [] }) {
   };
 
   return (
-    <section className="py-24 bg-[#070A10] border-t border-white/10 relative overflow-hidden" id="faq">
+    <section className="py-24 bg-[#F8FAFC] border-t border-slate-200/80 relative overflow-hidden" id="faq">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
             <HelpCircle className="w-3.5 h-3.5" />
             <span>Common Questions</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
             Frequently Asked Questions
           </h2>
-          <p className="mt-4 text-base text-slate-400">
+          <p className="mt-4 text-base text-slate-600">
             Everything you need to know about ordering websites, CMS capabilities, and IT support.
           </p>
         </div>
@@ -70,14 +47,15 @@ export default function HomeFaqAccordion({ faqs = [] }) {
             {categories.map((cat) => (
               <button
                 key={cat}
+                type="button"
                 onClick={() => {
                   setSelectedCategory(cat);
                   setOpenIdx(0);
                 }}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   selectedCategory === cat
-                    ? 'btn-primary-glow text-white'
-                    : 'glass-panel text-slate-400 hover:text-white'
+                    ? 'bg-[var(--brand-primary,#3B66D4)] text-white shadow-sm'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
                 }`}
               >
                 {cat}
@@ -86,25 +64,37 @@ export default function HomeFaqAccordion({ faqs = [] }) {
           </div>
         )}
 
-        {/* Accordion List */}
+        {/* Numbered Accordion List */}
         <div className="space-y-4">
           {filtered.map((faq, idx) => {
             const isOpen = openIdx === idx;
+            const numberFormatted = String(idx + 1).padStart(2, '0');
+
             return (
               <div
-                key={idx}
-                className="glass-card rounded-2xl border border-white/10 overflow-hidden transition-all"
+                key={faq._id || idx}
+                className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden transition-all duration-200"
               >
                 <button
+                  type="button"
                   onClick={() => toggle(idx)}
-                  className="w-full text-left p-6 flex items-center justify-between gap-4"
+                  className="w-full p-6 text-left flex items-center justify-between gap-4 focus:outline-none"
+                  aria-expanded={isOpen}
                 >
-                  <span className="font-bold text-white text-base sm:text-lg">
-                    {faq.question}
-                  </span>
+                  <div className="flex items-center gap-3.5">
+                    <span className="w-8 h-8 rounded-lg bg-blue-50 text-[var(--brand-primary,#3B66D4)] font-extrabold text-xs flex items-center justify-center flex-shrink-0">
+                      {numberFormatted}
+                    </span>
+                    <span className="font-bold text-slate-900 text-sm sm:text-base leading-snug">
+                      {faq.question}
+                    </span>
+                  </div>
+
                   <div
-                    className={`w-8 h-8 rounded-full glass-panel border border-white/10 flex items-center justify-center shrink-0 transition-transform ${
-                      isOpen ? 'rotate-180 bg-cyan-500/20 text-cyan-400' : 'text-slate-400'
+                    className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-200 shrink-0 ${
+                      isOpen
+                        ? 'bg-[var(--brand-primary,#3B66D4)] text-white rotate-180'
+                        : 'bg-slate-100 text-slate-500'
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -112,8 +102,8 @@ export default function HomeFaqAccordion({ faqs = [] }) {
                 </button>
 
                 {isOpen && (
-                  <div className="px-6 pb-6 pt-0 text-slate-300 text-sm sm:text-base leading-relaxed border-t border-white/5 mt-2 pt-4">
-                    {faq.answer}
+                  <div className="px-6 pb-6 pt-1 text-slate-600 text-sm leading-relaxed border-t border-slate-100">
+                    <p>{faq.answer}</p>
                   </div>
                 )}
               </div>

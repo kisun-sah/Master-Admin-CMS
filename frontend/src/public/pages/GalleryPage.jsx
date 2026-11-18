@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getGalleryAlbums, getGalleryImages, resolveMediaUrl } from '../lib/api';
 import SEOHead from '../components/layout/SEOHead';
-import DevicePreviewModal from '../components/gallery/DevicePreviewModal';
 import LightboxModal from '../components/common/LightboxModal';
 import {
   Sparkles,
   Layers,
   Image as ImageIcon,
-  ExternalLink,
+  Calendar,
+  Camera,
+  ArrowRight,
   Eye,
-  ShoppingBag,
+  Heart,
+  Share2,
 } from 'lucide-react';
 
 export default function GalleryPage() {
@@ -19,7 +21,7 @@ export default function GalleryPage() {
   const [streamImages, setStreamImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [activeModalProject, setActiveModalProject] = useState(null);
+  const [lightboxImages, setLightboxImages] = useState([]);
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const navigate = useNavigate();
 
@@ -41,86 +43,163 @@ export default function GalleryPage() {
     load();
   }, []);
 
-  const defaultTemplates = [
+  // Default Memory Albums when DB has not seeded custom records yet
+  const defaultMemoryAlbums = [
     {
-      title: 'Aura Premium E-Commerce Hub',
-      slug: 'aura-ecommerce-hub',
-      category: 'E-Commerce Websites',
+      _id: 'm-1',
+      title: 'Annual Corporate Summit & Awards Gala',
+      slug: 'annual-corporate-summit-awards-gala',
+      category: 'Corporate Events',
+      eventDate: '2026-10-15',
       description:
-        'A fully featured, high-performance online store with automated inventory, payment gateways, and a master admin panel.',
+        'A night celebrating company achievements, key partnerships, and recognizing exceptional performance across our engineering and operations teams.',
       coverImage:
-        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop',
-      techStack: ['Next.js 15', 'Tailwind', 'Node.js', 'PostgreSQL'],
+        'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 36,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1200&auto=format&fit=crop',
+          title: 'Opening Keynote Address',
+          caption: 'Leadership outlining strategic technological roadmaps for 2027.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=1200&auto=format&fit=crop',
+          title: 'Audience & Attendees',
+          caption: 'Distinguished guests and team members gathered for the event.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1528605248644-14dd04022da1?q=80&w=1200&auto=format&fit=crop',
+          title: 'Excellence Trophy Presentation',
+          caption: 'Honoring top innovators and contributors of the quarter.',
+        },
+      ],
     },
     {
-      title: 'CareFirst Hospital CMS & Patient Portal',
-      slug: 'carefirst-hospital-cms',
-      category: 'Hospital & Clinic CMS',
+      _id: 'm-2',
+      title: 'Himalayan Foothills Team Expedition & Trek',
+      slug: 'himalayan-foothills-team-expedition',
+      category: 'Team Retreats',
+      eventDate: '2026-09-22',
       description:
-        'Online doctor appointments, emergency bed capacity monitor, and HIPAA-ready administrative dashboard.',
+        '4-day outdoor expedition strengthening camaraderie, high-altitude hiking, team bonding, and campfire memories.',
       coverImage:
-        'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop',
-      techStack: ['React', 'Express', 'Node.js', 'MongoDB'],
+        'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 42,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop',
+          title: 'Summit Sunrise View',
+          caption: 'First rays of daylight over the mountain ridgeline.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1200&auto=format&fit=crop',
+          title: 'Lakeside Camp Base',
+          caption: 'Setting up camp under clear open skies.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1200&auto=format&fit=crop',
+          title: 'Trail Exploration',
+          caption: 'Hiking through pristine pine forests and valleys.',
+        },
+      ],
     },
     {
-      title: 'School & College Portals',
-      slug: 'school-college-portals',
-      category: 'School & College Portals',
+      _id: 'm-3',
+      title: 'Global Service Foundation CSR & Outreach Day',
+      slug: 'global-service-foundation-csr-outreach',
+      category: 'Community & CSR',
+      eventDate: '2026-08-14',
       description:
-        'Comprehensive institutional web presence with dynamic syllabus builder, faculty directory, and admission inquiry CRM.',
+        'Volunteering in local education centers, delivering IT supplies, and conducting interactive computing workshops for young learners.',
       coverImage:
-        'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?q=80&w=800&auto=format&fit=crop',
-      techStack: ['MERN Stack', 'Tailwind', 'Express.js', 'Vite'],
+        'https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 28,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?q=80&w=1200&auto=format&fit=crop',
+          title: 'Community Gathering',
+          caption: 'Bringing smiles and educational resources to students.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=1200&auto=format&fit=crop',
+          title: 'Digital Literacy Session',
+          caption: 'Teaching fundamentals of web navigation and digital skills.',
+        },
+      ],
     },
     {
-      title: 'Digital Marketing Results & Analytics',
-      slug: 'digital-marketing-results',
-      category: 'Digital Marketing Results',
+      _id: 'm-4',
+      title: 'Tech Innovation Hackathon & Product Launch',
+      slug: 'tech-innovation-hackathon-product-launch',
+      category: 'Corporate Events',
+      eventDate: '2026-07-08',
       description:
-        'Real-time traffic growth proof showcasing 4x lead acquisition across Google Ads and organic technical SEO.',
+        '48-hour continuous coding sprint where our architects developed next-generation autonomous CMS agents and live AI tools.',
       coverImage:
-        'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=800&auto=format&fit=crop',
-      techStack: ['Google Ads', 'SEO Engine', 'Meta Ads', 'GA4'],
+        'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 30,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1200&auto=format&fit=crop',
+          title: 'Sprint Kickoff',
+          caption: 'Brainstorming architectures and prototype goals.',
+        },
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1200&auto=format&fit=crop',
+          title: 'Collaborative Engineering',
+          caption: 'Developers fine-tuning live models and database pipelines.',
+        },
+      ],
     },
     {
-      title: 'Apex Cloud & Server Infrastructure',
-      slug: 'apex-cloud-server-infrastructure',
-      category: 'IT & Networking Setup',
+      _id: 'm-5',
+      title: 'Annual Cultural Festival & Festive Gathering',
+      slug: 'annual-cultural-festival-festive-gathering',
+      category: 'Celebrations',
+      eventDate: '2026-05-19',
       description:
-        'High-availability AWS VPC cluster setup with automated failover, DDoS mitigation, and daily encrypted snapshots.',
+        'A vibrant celebration with traditional cuisine, musical performances, festive attire, and family gatherings.',
       coverImage:
-        'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?q=80&w=800&auto=format&fit=crop',
-      techStack: ['AWS', 'Docker', 'Linux', 'Security SLA'],
+        'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 45,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop',
+          title: 'Cultural Night Festivities',
+          caption: 'Lights, music, and celebration with the entire team.',
+        },
+      ],
     },
     {
-      title: 'Wanderlust Travel & Tour Booking',
-      slug: 'wanderlust-travel-booking',
-      category: 'Travel & Booking',
+      _id: 'm-6',
+      title: 'Client Appreciation & Partnership Dinner',
+      slug: 'client-appreciation-partnership-dinner',
+      category: 'Office Culture',
+      eventDate: '2026-04-10',
       description:
-        'Tour packages catalog, interactive itineraries, dynamic currency converter, and Stripe payment gateway.',
+        'An intimate networking evening thanking our long-standing enterprise clients, partners, and collaborators for shared milestones.',
       coverImage:
-        'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=800&auto=format&fit=crop',
-      techStack: ['Next.js', 'Node.js', 'Tailwind', 'Stripe'],
+        'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1200&auto=format&fit=crop',
+      photoCount: 22,
+      images: [
+        {
+          imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=1200&auto=format&fit=crop',
+          title: 'Toast to Shared Milestones',
+          caption: 'Celebrating five years of successful joint ventures.',
+        },
+      ],
     },
   ];
 
-  const activeAlbums =
-    albums && albums.length > 0
-      ? albums.map((a, i) => ({
-          ...a,
-          category: a.category || defaultTemplates[i % defaultTemplates.length].category,
-          techStack: ['MERN Stack', 'Tailwind', 'Master Admin CMS'],
-        }))
-      : defaultTemplates;
+  const activeAlbums = albums && albums.length > 0 ? albums : defaultMemoryAlbums;
 
   const categories = [
     'All',
-    'E-Commerce Websites',
-    'Hospital & Clinic CMS',
-    'School & College Portals',
-    'Travel & Booking',
-    'Digital Marketing Results',
-    'IT & Networking Setup',
+    'Corporate Events',
+    'Team Retreats',
+    'Celebrations',
+    'Office Culture',
+    'Community & CSR',
   ];
 
   const filteredAlbums =
@@ -132,56 +211,89 @@ export default function GalleryPage() {
             a.title?.toLowerCase().includes(selectedCategory.toLowerCase())
         );
 
-  const handleBuy = (project) => {
-    navigate(`/contact?project=${encodeURIComponent(project.title)}`);
+  // Extract all individual images for masonry photo wall
+  const allMemoryPhotos = [];
+  activeAlbums.forEach((alb) => {
+    if (alb.images && Array.isArray(alb.images) && alb.images.length > 0) {
+      alb.images.forEach((img) => {
+        allMemoryPhotos.push({
+          ...img,
+          albumTitle: alb.title,
+          category: alb.category,
+        });
+      });
+    } else if (alb.coverImage) {
+      allMemoryPhotos.push({
+        imageUrl: alb.coverImage,
+        title: alb.title,
+        category: alb.category,
+      });
+    }
+  });
+
+  const displayStreamImages = streamImages.length > 0 ? streamImages : allMemoryPhotos;
+
+  const openAlbumSlideshow = (album) => {
+    const imgs = album.images && album.images.length > 0
+      ? album.images
+      : [{ imageUrl: album.coverImage, title: album.title, caption: album.description }];
+    setLightboxImages(imgs);
+    setLightboxIndex(0);
+  };
+
+  const openSingleImage = (index) => {
+    setLightboxImages(displayStreamImages);
+    setLightboxIndex(index);
   };
 
   return (
-    <div className="pt-28 pb-20 bg-[#070A10] min-h-screen">
+    <div className="pt-28 pb-20 bg-[#F8FAFC] min-h-screen">
       <SEOHead
-        title="Deliverance & Templates Gallery — Portfolio & Ready Websites"
-        description="Explore live website templates, client portals, and digital marketing results built with the Master Admin CMS. Multi-device live demo previews and instant deployments."
+        title="Moments & Photo Memories Gallery — Captured Events & Milestones"
+        description="Browse our organization photo memories, corporate retreats, celebratory milestones, conferences, and community impact moments."
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header (Matching Screenshot 1) */}
+        {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full glass-panel border border-cyan-500/30 text-cyan-400 text-xs font-bold uppercase tracking-wider mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Visual Portfolio & Architecture Showcase</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
+            <Camera className="w-3.5 h-3.5" />
+            <span>Memories & Captured Milestones</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-            Deliverance & Templates Gallery
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+            Photo Memories & Moments Gallery
           </h1>
-          <p className="mt-4 text-base sm:text-lg text-slate-400">
-            Explore our premium production-ready templates & successful client projects
+          <p className="mt-4 text-base sm:text-lg text-slate-600">
+            A visual retrospective of our journey, corporate summits, team retreats, festive celebrations, and memorable stories.
           </p>
         </div>
 
-        {/* Dual Mode Switcher: Albums vs All Visuals */}
+        {/* Dual Mode Switcher: Categorized Albums vs All Photos Wall */}
         <div className="flex items-center justify-center gap-4 mb-8">
           <button
+            type="button"
             onClick={() => setActiveTab('albums')}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
               activeTab === 'albums'
-                ? 'btn-primary-glow shadow-neon-cyan text-white'
-                : 'glass-panel text-slate-400 hover:text-white'
+                ? 'bg-[var(--brand-primary,#3B66D4)] text-white shadow-md shadow-blue-500/25'
+                : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
             }`}
           >
             <Layers className="w-4 h-4" />
-            <span>Categorized Project Albums</span>
+            <span>Event & Memory Albums ({activeAlbums.length})</span>
           </button>
 
           <button
+            type="button"
             onClick={() => setActiveTab('masonry')}
             className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
               activeTab === 'masonry'
-                ? 'btn-primary-glow shadow-neon-cyan text-white'
-                : 'glass-panel text-slate-400 hover:text-white'
+                ? 'bg-[var(--brand-primary,#3B66D4)] text-white shadow-md shadow-blue-500/25'
+                : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
             }`}
           >
             <ImageIcon className="w-4 h-4" />
-            <span>All Portfolio Visuals Masonry</span>
+            <span>All Photos Wall ({displayStreamImages.length})</span>
           </button>
         </div>
 
@@ -193,96 +305,113 @@ export default function GalleryPage() {
               return (
                 <button
                   key={cat}
+                  type="button"
                   onClick={() => setSelectedCategory(cat)}
                   className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${
                     isSelected
-                      ? 'btn-primary-glow shadow-neon-cyan text-white'
-                      : 'glass-panel text-slate-300 hover:text-white hover:border-white/20'
+                      ? 'bg-[var(--brand-primary,#3B66D4)] text-white shadow-sm'
+                      : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  {cat === 'All' ? 'All Projects' : cat}
+                  {cat === 'All' ? 'All Memories' : cat}
                 </button>
               );
             })}
           </div>
         )}
 
-        {/* Tab 1: Albums Grid (Matching Screenshot 1) */}
+        {/* Tab 1: Memory Albums Grid */}
         {activeTab === 'albums' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredAlbums.map((item, idx) => {
               const imageSrc = resolveMediaUrl(
                 item.coverImage ||
-                  item.imageUrl ||
-                  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop'
+                  item.images?.[0]?.imageUrl ||
+                  'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=800&auto=format&fit=crop'
               );
+
+              const photoCount =
+                item.photoCount ||
+                (item.images && item.images.length > 0 ? item.images.length : 12);
+
+              const formattedDate = item.eventDate
+                ? new Date(item.eventDate).toLocaleDateString('en-US', {
+                    month: 'short',
+                    year: 'numeric',
+                  })
+                : 'Recent Memory';
 
               return (
                 <div
-                  key={idx}
-                  className="glass-card rounded-2xl overflow-hidden border border-white/10 flex flex-col justify-between group hover:border-cyan-500/40 transition-all duration-300 shadow-xl"
+                  key={item._id || idx}
+                  className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 flex flex-col justify-between group hover:shadow-xl transition-all duration-300 shadow-sm"
                 >
                   <div>
+                    {/* Cover Image Container */}
                     <div
-                      className="relative aspect-[16/10] overflow-hidden bg-slate-900 cursor-pointer"
-                      onClick={() => setActiveModalProject(item)}
+                      className="relative aspect-[16/10] overflow-hidden bg-slate-100 cursor-pointer"
+                      onClick={() => openAlbumSlideshow(item)}
                     >
                       <img
                         src={imageSrc}
                         alt={item.title}
-                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#0D1322] via-transparent to-transparent opacity-60" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent opacity-60" />
 
-                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-md glass-panel border border-white/20 text-[10px] font-bold text-white bg-black/60 shadow-lg">
-                        Built with Master Admin CMS
+                      {/* Top Badges */}
+                      <div className="absolute top-3 left-3 px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-slate-200 text-[11px] font-bold text-slate-800 shadow-sm flex items-center gap-1.5">
+                        <Camera className="w-3.5 h-3.5 text-[var(--brand-primary,#3B66D4)]" />
+                        <span>{photoCount} Photos</span>
                       </div>
 
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-                        <div className="w-12 h-12 rounded-full glass-panel border border-cyan-400 text-cyan-400 flex items-center justify-center shadow-neon-cyan">
+                      <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-[var(--brand-primary,#3B66D4)] text-white text-[11px] font-bold shadow-sm">
+                        {item.category || 'Memory'}
+                      </div>
+
+                      {/* Hover Overlay Icon */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900/30">
+                        <div className="w-12 h-12 rounded-full bg-white text-[var(--brand-primary,#3B66D4)] flex items-center justify-center shadow-lg transform scale-90 group-hover:scale-100 transition-transform">
                           <Eye className="w-6 h-6" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors mb-2">
+                    {/* Album Info */}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 text-xs text-slate-500 mb-2 font-medium">
+                        <Calendar className="w-3.5 h-3.5 text-[var(--brand-primary,#3B66D4)]" />
+                        <span>{formattedDate}</span>
+                      </div>
+
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-[var(--brand-primary,#3B66D4)] transition-colors mb-2 leading-snug">
                         {item.title}
                       </h3>
-                      <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed mb-4">
+
+                      <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
                         {item.description}
                       </p>
-
-                      <div className="flex flex-wrap gap-1.5">
-                        {(item.techStack || ['Next.js', 'Tailwind', 'Node.js', 'MongoDB']).map(
-                          (tech, tIdx) => (
-                            <span
-                              key={tIdx}
-                              className="text-[10px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/5 text-slate-300"
-                            >
-                              {tech}
-                            </span>
-                          )
-                        )}
-                      </div>
                     </div>
                   </div>
 
-                  <div className="px-5 pb-5 pt-0 grid grid-cols-2 gap-3">
+                  {/* Actions */}
+                  <div className="px-6 pb-6 pt-0 grid grid-cols-2 gap-3 border-t border-slate-100 pt-4">
                     <button
-                      onClick={() => setActiveModalProject(item)}
-                      className="py-2.5 px-3 rounded-xl glass-panel border border-white/10 hover:border-cyan-400/50 text-slate-200 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5"
+                      type="button"
+                      onClick={() => openAlbumSlideshow(item)}
+                      className="py-2.5 px-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 hover:text-slate-900 text-xs font-bold transition-all flex items-center justify-center gap-1.5"
                     >
-                      <span>Live Demo</span>
-                      <ExternalLink className="w-3.5 h-3.5 text-cyan-400" />
+                      <Eye className="w-3.5 h-3.5 text-[var(--brand-primary,#3B66D4)]" />
+                      <span>Quick View</span>
                     </button>
 
-                    <button
-                      onClick={() => handleBuy(item)}
-                      className="py-2.5 px-3 rounded-xl btn-primary-glow text-xs font-bold text-white shadow-neon-cyan flex items-center justify-center gap-1.5"
+                    <Link
+                      to={`/gallery/${item.slug}`}
+                      className="py-2.5 px-3 rounded-xl bg-[var(--brand-primary,#3B66D4)] hover:bg-blue-700 text-xs font-bold text-white shadow-md shadow-blue-500/25 flex items-center justify-center gap-1.5 transition-all"
                     >
-                      <span>Buy Website</span>
-                    </button>
+                      <span>View Album</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
               );
@@ -290,27 +419,32 @@ export default function GalleryPage() {
           </div>
         )}
 
-        {/* Tab 2: Masonry Stream of All Visuals */}
+        {/* Tab 2: Masonry Photo Wall (All Photographs) */}
         {activeTab === 'masonry' && (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
-            {(streamImages.length > 0 ? streamImages : defaultTemplates).map((img, idx) => {
+            {displayStreamImages.map((img, idx) => {
               const src = resolveMediaUrl(
-                img.imageUrl || img.coverImage || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=800&auto=format&fit=crop'
+                img.imageUrl || img.coverImage || 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=800&auto=format&fit=crop'
               );
               return (
                 <div
                   key={idx}
-                  onClick={() => setLightboxIndex(idx)}
-                  className="break-inside-avoid glass-card rounded-2xl overflow-hidden border border-white/10 cursor-pointer group relative"
+                  onClick={() => openSingleImage(idx)}
+                  className="break-inside-avoid bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm cursor-pointer group relative hover:shadow-xl transition-all"
                 >
                   <img
                     src={src}
-                    alt={img.title || 'Portfolio Visual'}
-                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-300"
+                    alt={img.title || 'Memory Photograph'}
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col justify-end p-4 transition-opacity">
-                    <div className="text-sm font-bold text-white">{img.title}</div>
-                    <div className="text-xs text-cyan-400 font-semibold">{img.category || 'Visual Showcase'}</div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 flex flex-col justify-end p-5 transition-opacity">
+                    <div className="text-sm font-bold text-white">{img.title || 'Captured Moment'}</div>
+                    {img.caption && (
+                      <div className="text-xs text-slate-200 mt-1 line-clamp-2">{img.caption}</div>
+                    )}
+                    <div className="text-[10px] text-blue-200 font-semibold mt-2 uppercase tracking-wider">
+                      {img.category || img.albumTitle || 'Photo Memory'}
+                    </div>
                   </div>
                 </div>
               );
@@ -319,29 +453,20 @@ export default function GalleryPage() {
         )}
       </div>
 
-      {/* Device Preview Modal (Matching Screenshot 1) */}
-      {activeModalProject && (
-        <DevicePreviewModal
-          project={activeModalProject}
-          onClose={() => setActiveModalProject(null)}
-          onBuy={handleBuy}
-        />
-      )}
-
-      {/* Lightbox for Masonry */}
+      {/* Lightbox Modal for Fullscreen Memory Slideshow */}
       {lightboxIndex !== null && (
         <LightboxModal
-          images={streamImages.length > 0 ? streamImages : defaultTemplates}
+          images={lightboxImages}
           currentIndex={lightboxIndex}
           onClose={() => setLightboxIndex(null)}
           onPrev={() =>
             setLightboxIndex((p) =>
-              p === 0 ? (streamImages.length || defaultTemplates.length) - 1 : p - 1
+              p === 0 ? lightboxImages.length - 1 : p - 1
             )
           }
           onNext={() =>
             setLightboxIndex((p) =>
-              p === (streamImages.length || defaultTemplates.length) - 1 ? 0 : p + 1
+              p === lightboxImages.length - 1 ? 0 : p + 1
             )
           }
         />

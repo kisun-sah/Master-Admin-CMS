@@ -1,35 +1,40 @@
 import React from 'react';
-import { Award, CheckCircle, Clock, TrendingUp } from 'lucide-react';
+import { Rocket, Smile, TrendingUp, Trophy } from 'lucide-react';
 
 export default function StatsStrip({ stats = [] }) {
   const defaultStats = [
-    { value: '50+', label: 'Websites & Portals Delivered', icon: CheckCircle },
-    { value: '99.9%', label: 'System Uptime Managed', icon: Clock },
-    { value: '3.8x', label: 'Average Client Lead Growth', icon: TrendingUp },
-    { value: '24/7', label: 'Dedicated IT & SLA Support', icon: Award },
+    { value: '100+', label: 'Projects Delivered', icon: Rocket, color: 'text-blue-600 bg-blue-50' },
+    { value: '98%', label: 'Client Satisfaction', icon: Smile, color: 'text-emerald-600 bg-emerald-50' },
+    { value: '5x', label: 'Average Growth', icon: TrendingUp, color: 'text-cyan-600 bg-cyan-50' },
+    { value: '10+', label: 'Industry Awards', icon: Trophy, color: 'text-amber-600 bg-amber-50' },
   ];
 
   const items = stats.length > 0 ? stats : defaultStats;
 
   return (
-    <section className="py-14 bg-[#0B0F19] border-y border-white/10 relative">
+    <section className="py-10 bg-white border-b border-slate-200/90 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
           {items.map((stat, idx) => {
-            const Icon = stat.icon || CheckCircle;
+            const Icon = stat.icon || Rocket;
             return (
               <div
                 key={idx}
-                className="glass-card rounded-2xl p-6 text-center border border-white/5 hover:border-cyan-500/30 transition-all"
+                className="flex items-center gap-4 px-3 sm:px-6 py-2 justify-center group"
               >
-                <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 mx-auto flex items-center justify-center mb-3">
-                  <Icon className="w-5 h-5" />
+                <div
+                  className={`w-12 h-12 rounded-2xl ${stat.color || 'text-blue-600 bg-blue-50'} flex items-center justify-center shrink-0 shadow-xs group-hover:scale-110 transition-transform`}
+                >
+                  <Icon className="w-6 h-6" />
                 </div>
-                <div className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm text-slate-400 font-medium">
-                  {stat.label}
+
+                <div className="text-left">
+                  <div className="text-2xl sm:text-3xl font-black text-[#172554] tracking-tight leading-none mb-1">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs sm:text-sm text-[#64748B] font-medium">
+                    {stat.label}
+                  </div>
                 </div>
               </div>
             );
