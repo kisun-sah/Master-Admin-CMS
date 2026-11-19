@@ -161,10 +161,10 @@ export default function Navbar() {
       {/* Main Sticky Navbar (Transparent over banner, turns solid white on scroll) */}
       <header
         className={`w-full z-50 transition-all duration-300 ${scrolled
-            ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md text-slate-900 shadow-md border-b border-slate-200/80'
-            : isHomePage
-              ? 'absolute top-10 left-0 right-0 bg-transparent text-white border-b border-transparent'
-              : 'sticky top-0 left-0 right-0 bg-white text-slate-900 shadow-sm border-b border-slate-200'
+          ? 'fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md text-slate-900 shadow-md border-b border-slate-200/80'
+          : isHomePage
+            ? 'absolute top-10 left-0 right-0 bg-transparent text-white border-b border-transparent'
+            : 'sticky top-0 left-0 right-0 bg-white text-slate-900 shadow-sm border-b border-slate-200'
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -172,8 +172,8 @@ export default function Navbar() {
           <Link
             to="/"
             className={`group self-start bg-white rounded-t-none rounded-b-2xl sm:rounded-b-3xl shadow-xl shadow-slate-900/15 border-x border-b border-slate-100/90 flex items-center justify-center transition-all duration-300 z-20 ${scrolled
-                ? 'h-16 min-w-[76px] sm:min-w-[88px] max-w-[130px] p-1.5'
-                : 'h-24 sm:h-28 md:h-32 min-w-[96px] sm:min-w-[116px] md:min-w-[130px] max-w-[180px] p-2 sm:p-2.5 md:p-3'
+              ? 'h-16 min-w-[76px] sm:min-w-[88px] max-w-[130px] p-1.5'
+              : 'h-24 sm:h-28 md:h-32 min-w-[96px] sm:min-w-[116px] md:min-w-[130px] max-w-[180px] p-2 sm:p-2.5 md:p-3'
               }`}
             title={settings?.siteName || 'Home'}
           >
@@ -214,12 +214,12 @@ export default function Navbar() {
                     <Link
                       to={item.url}
                       className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-1 ${isActive
-                          ? showDarkNavbarText
-                            ? 'text-[var(--brand-primary,#3B66D4)] bg-blue-50'
-                            : 'text-cyan-300 bg-white/10'
-                          : showDarkNavbarText
-                            ? 'text-slate-700 hover:text-[var(--brand-primary,#3B66D4)] hover:bg-slate-50'
-                            : 'text-slate-200 hover:text-white hover:bg-white/10'
+                        ? showDarkNavbarText
+                          ? 'text-[var(--brand-primary,#3B66D4)] bg-blue-50'
+                          : 'text-cyan-300 bg-white/10'
+                        : showDarkNavbarText
+                          ? 'text-slate-700 hover:text-[var(--brand-primary,#3B66D4)] hover:bg-slate-50'
+                          : 'text-slate-200 hover:text-white hover:bg-white/10'
                         }`}
                     >
                       <span>{item.label}</span>
@@ -235,17 +235,6 @@ export default function Navbar() {
               })}
             </nav>
 
-            {/* Prominent "Get a Consultation" CTA Button (Solid High-Contrast Gradient & Guaranteed Visibility) */}
-            <div className="hidden md:flex items-center">
-              <Link
-                to="/contact"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-md shadow-blue-500/25 hover:shadow-lg hover:shadow-blue-500/35 hover:scale-105 active:scale-95 transition-all"
-                title="Book a Free Consultation"
-              >
-                <PhoneCall className="w-3.5 h-3.5 text-white" />
-                <span className="text-white font-bold whitespace-nowrap">Get a Consultation</span>
-              </Link>
-            </div>
 
             {/* Direct WhatsApp Quick Chat Icon */}
             <div className="hidden sm:flex items-center">
@@ -276,8 +265,8 @@ export default function Navbar() {
                 type="button"
                 onClick={() => setMobileOpen((prev) => !prev)}
                 className={`p-2 rounded-lg ${showDarkNavbarText
-                    ? 'text-slate-900 hover:bg-slate-100'
-                    : 'text-white hover:bg-white/10'
+                  ? 'text-slate-900 hover:bg-slate-100'
+                  : 'text-white hover:bg-white/10'
                   }`}
                 aria-label="Toggle Mobile Menu"
               >

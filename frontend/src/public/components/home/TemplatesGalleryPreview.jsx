@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { resolveMediaUrl } from '../../lib/api';
 import LightboxModal from '../common/LightboxModal';
 import { ArrowRight, Maximize2 } from 'lucide-react';
+import { FadeUp, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function TemplatesGalleryPreview({ albums = [], images = [] }) {
   const [lightboxIndex, setLightboxIndex] = useState(null);
@@ -147,7 +148,7 @@ export default function TemplatesGalleryPreview({ albums = [], images = [] }) {
     <section className="py-20 sm:py-24 bg-[#FAFAF8] relative overflow-hidden" id="gallery">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-12 relative z-10">
         {/* ================= MINIMALIST HEADER: "— GALLERY" ================= */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10">
+        <FadeUp delay={0.05} className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl font-light text-slate-900 tracking-wider flex items-center gap-3 select-none">
             <span className="w-8 h-[2px] bg-slate-900 inline-block" />
             <span className="font-normal uppercase tracking-[0.2em]">GALLERY</span>
@@ -160,51 +161,60 @@ export default function TemplatesGalleryPreview({ albums = [], images = [] }) {
             <span>View Full Gallery</span>
             <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
-        </div>
+        </FadeUp>
 
         {/* ================= ASYMMETRIC 6-PHOTO GRID ================= */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 lg:gap-5">
+        <StaggerContainer
+          staggerDelay={0.08}
+          delayChildren={0.05}
+          className="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4 lg:gap-5"
+        >
           {displayPhotos.map((photo, idx) => {
             const resolvedUrl = resolveMediaUrl(photo.imageUrl);
             const spanClass = colSpans[idx] || 'col-span-12 md:col-span-4';
 
             return (
-              <div
+              <StaggerItem
                 key={photo._id || idx}
-                onClick={() => setLightboxIndex(idx)}
-                className={`group relative overflow-hidden rounded-md bg-slate-200 cursor-pointer shadow-xs hover:shadow-lg transition-all duration-300 h-[240px] sm:h-[280px] lg:h-[320px] select-none ${spanClass}`}
-                title={photo.title}
+                preset="card-reveal"
+                className={spanClass}
               >
-                {/* Image */}
-                <img
-                  src={resolvedUrl}
-                  alt={photo.title || 'Gallery photograph'}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = defaultMoments[idx % defaultMoments.length].imageUrl;
-                  }}
-                />
+                <div
+                  onClick={() => setLightboxIndex(idx)}
+                  className="group relative overflow-hidden rounded-md bg-slate-200 cursor-pointer shadow-xs hover:shadow-lg transition-all duration-300 h-[240px] sm:h-[280px] lg:h-[320px] select-none w-full"
+                  title={photo.title}
+                >
+                  {/* Image */}
+                  <img
+                    src={resolvedUrl}
+                    alt={photo.title || 'Gallery photograph'}
+                    className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = defaultMoments[idx % defaultMoments.length].imageUrl;
+                    }}
+                  />
 
-                {/* Atmospheric Gradient for Crisp Title Readability */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent transition-opacity duration-300" />
+                  {/* Atmospheric Gradient for Crisp Title Readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent transition-opacity duration-300" />
 
-                {/* Bottom Left Title Text */}
-                <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 right-4 z-10">
-                  <span className="text-white text-sm sm:text-base font-normal tracking-wide drop-shadow-md block truncate">
-                    {photo.title}
-                  </span>
+                  {/* Bottom Left Title Text */}
+                  <div className="absolute bottom-4 left-4 sm:bottom-5 sm:left-5 right-4 z-10">
+                    <span className="text-white text-sm sm:text-base font-normal tracking-wide drop-shadow-md block truncate">
+                      {photo.title}
+                    </span>
+                  </div>
+
+                  {/* Subtle Maximize Icon on Hover */}
+                  <div className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md text-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </div>
                 </div>
-
-                {/* Subtle Maximize Icon on Hover */}
-                <div className="absolute top-3.5 right-3.5 w-7 h-7 rounded-full bg-black/40 backdrop-blur-md text-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <Maximize2 className="w-3.5 h-3.5" />
-                </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
 
       {/* Fullscreen Lightbox Modal */}

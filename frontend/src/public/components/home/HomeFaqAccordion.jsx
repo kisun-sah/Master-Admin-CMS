@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronDown, HelpCircle, Sparkles } from 'lucide-react';
 import { DEFAULT_CMS_FALLBACKS } from '../../config/defaultCmsFallbacks';
+import { FadeUp, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function HomeFaqAccordion({ faqs = [] }) {
   const [openIdx, setOpenIdx] = useState(0);
@@ -28,7 +29,7 @@ export default function HomeFaqAccordion({ faqs = [] }) {
   return (
     <section className="py-24 bg-[#F8FAFC] border-t border-slate-200/80 relative overflow-hidden" id="faq">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <FadeUp className="text-center max-w-2xl mx-auto mb-12">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
             <HelpCircle className="w-3.5 h-3.5" />
             <span>Common Questions</span>
@@ -39,7 +40,7 @@ export default function HomeFaqAccordion({ faqs = [] }) {
           <p className="mt-4 text-base text-slate-600">
             Everything you need to know about ordering websites, CMS capabilities, and IT support.
           </p>
-        </div>
+        </FadeUp>
 
         {/* Category Tabs if multiple */}
         {categories.length > 2 && (
@@ -65,13 +66,14 @@ export default function HomeFaqAccordion({ faqs = [] }) {
         )}
 
         {/* Numbered Accordion List */}
-        <div className="space-y-4">
+        <StaggerContainer staggerDelay={0.08} className="space-y-4">
           {filtered.map((faq, idx) => {
             const isOpen = openIdx === idx;
             const numberFormatted = String(idx + 1).padStart(2, '0');
 
             return (
-              <div
+              <StaggerItem
+                preset="card-reveal"
                 key={faq._id || idx}
                 className="bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden transition-all duration-200"
               >
@@ -106,10 +108,10 @@ export default function HomeFaqAccordion({ faqs = [] }) {
                     <p>{faq.answer}</p>
                   </div>
                 )}
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

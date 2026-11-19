@@ -475,6 +475,22 @@ a {
   list-style: none;
 }
 
+/* Submenu Logical Section Divider */
+.nav-submenu-divider {
+  margin: 10px 0 4px 0;
+  padding: 6px 10px 3px 10px;
+  border-top: 1px dashed var(--border);
+  list-style: none;
+}
+.nav-submenu-divider-text {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+  display: block;
+}
+
 /* Submenu Items */
 .nav-subitem-btn {
   width: 100%;

@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Activity,
 } from 'lucide-react';
+import { FadeUp, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function WhyChooseUsSection() {
   const cards = [
@@ -50,33 +51,38 @@ export default function WhyChooseUsSection() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <FadeUp delay={0.05} className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>BENEFITS</span>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#172554] tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             Why <span className="text-blue-600">Choose Us</span>
           </h2>
 
-          <p className="mt-3 text-base text-[#64748B]">
+          <p className="mt-3 text-base sm:text-lg text-[#64748B] leading-relaxed">
             Engineered with modern architecture, automated intelligence, and dedicated support for maximum performance.
           </p>
-        </div>
+        </FadeUp>
 
         {/* 3 Clean Soft Neumorphic Benefit Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
+        <StaggerContainer
+          staggerDelay={0.1}
+          delayChildren={0.08}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12"
+        >
           {cards.map((card, idx) => {
             const Icon = card.icon;
             return (
-              <div
+              <StaggerItem
                 key={idx}
-                className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-md hover:shadow-xl hover:border-blue-400 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
+                preset="card-reveal"
+                className="bg-white rounded-3xl p-8 border border-slate-200/90 shadow-xs hover:shadow-xl hover:border-blue-400 transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
               >
                 <div>
                   {/* Metric Dial / Badge container */}
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 shadow-xs group-hover:scale-110 transition-transform">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-50 to-indigo-50 border border-blue-100 flex items-center justify-center text-blue-600 mb-6 shadow-xs group-hover:scale-110 transition-transform duration-300">
                     <Icon className="w-8 h-8" />
                   </div>
 
@@ -88,7 +94,7 @@ export default function WhyChooseUsSection() {
                     <span className="text-slate-500 font-normal">{card.metricSub}</span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-[#172554] mb-3 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-xl font-bold text-[#0F172A] mb-3 group-hover:text-blue-600 transition-colors">
                     {card.title}
                   </h3>
 
@@ -96,23 +102,28 @@ export default function WhyChooseUsSection() {
                     {card.desc}
                   </p>
                 </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
 
         {/* Bottom Feature Pills */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <StaggerContainer
+          staggerDelay={0.06}
+          delayChildren={0.2}
+          className="flex flex-wrap items-center justify-center gap-3"
+        >
           {pills.map((pill, idx) => (
-            <div
+            <StaggerItem
               key={idx}
+              preset="card-reveal"
               className="px-4 py-2 rounded-full bg-white border border-slate-200/90 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs flex items-center gap-2 hover:border-blue-400 transition-all"
             >
               <CheckCircle2 className="w-4 h-4 text-blue-600" />
               <span>{pill}</span>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

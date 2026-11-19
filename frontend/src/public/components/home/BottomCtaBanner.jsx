@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useCms } from '../../context/CmsContext';
 import { Sparkles, ArrowRight, MessageCircle, Phone, CheckCircle2 } from 'lucide-react';
+import { FadeUp, ScaleIn } from '../common/ScrollReveal';
 
 export default function BottomCtaBanner() {
   const { settings } = useCms();
@@ -12,7 +13,7 @@ export default function BottomCtaBanner() {
   return (
     <section className="py-20 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="relative rounded-3xl p-8 sm:p-14 lg:p-16 overflow-hidden bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
+        <ScaleIn className="relative rounded-3xl p-8 sm:p-14 lg:p-16 overflow-hidden bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-500 text-white shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8">
           {/* Subtle Ambient Radial Lighting */}
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-white/20 rounded-full blur-[100px] pointer-events-none" />
 
@@ -55,7 +56,7 @@ export default function BottomCtaBanner() {
               className="w-full h-full object-cover rounded-3xl border-4 border-white/40 shadow-2xl transition-transform hover:scale-105 duration-500"
             />
           </div>
-        </div>
+        </ScaleIn>
       </div>
     </section>
   );

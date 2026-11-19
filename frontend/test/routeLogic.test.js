@@ -9,6 +9,7 @@ import assert from 'node:assert/strict';
 const VALID_ROUTES = new Set([
   'dashboard',
   'settings',
+  'content-pillars',
   'navigation',
   'sliders',
   'popups',
@@ -58,6 +59,16 @@ test('Route parser resolves /admin/services to services module', () => {
 test('Route parser resolves /admin/blogs to blogs module', () => {
   const loc = { pathname: '/admin/blogs', hash: '' };
   assert.equal(getRouteFromLocation(loc), 'blogs');
+});
+
+test('Route parser resolves /admin/content-pillars to content-pillars module', () => {
+  const loc = { pathname: '/admin/content-pillars', hash: '' };
+  assert.equal(getRouteFromLocation(loc), 'content-pillars');
+});
+
+test('Route parser resolves direct /content-pillars under admin router', () => {
+  const loc = { pathname: '/content-pillars', hash: '' };
+  assert.equal(getRouteFromLocation(loc), 'content-pillars');
 });
 
 test('Route parser falls back to dashboard on root /admin or /', () => {

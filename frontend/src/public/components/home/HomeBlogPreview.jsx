@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { resolveMediaUrl } from '../../lib/api';
+import { FadeUp, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function HomeBlogPreview({ blogs = [] }) {
   // Default high-quality fallbacks if CMS database has fewer than 3 published blogs
@@ -64,19 +65,19 @@ export default function HomeBlogPreview({ blogs = [] }) {
     <section className="py-16 sm:py-20 bg-white relative overflow-hidden" id="blog">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <FadeUp className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#234289] tracking-tight">
             Our News & Events
           </h2>
           <p className="mt-2 text-sm sm:text-base text-slate-500">
             Stay updated with the latest activities, insights, and happenings from our foundation.
           </p>
-        </div>
+        </FadeUp>
 
         {/* 2-Column Layout: 1 Featured Left + 2 Stacked Right */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           {/* Left Column: Big Featured News Card */}
-          <div className="lg:col-span-7 flex flex-col">
+          <StaggerItem preset="card-reveal" className="lg:col-span-7 flex flex-col">
             <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-slate-100 transition-all duration-300 flex flex-col h-full group">
               <div className="relative w-full h-[320px] sm:h-[400px] lg:h-[420px] overflow-hidden bg-slate-900">
                 <img
@@ -117,7 +118,7 @@ export default function HomeBlogPreview({ blogs = [] }) {
                 </div>
               </div>
             </div>
-          </div>
+          </StaggerItem>
 
           {/* Right Column: 2 Stacked Cards + View All Button */}
           <div className="lg:col-span-5 flex flex-col justify-between py-1">
@@ -126,7 +127,8 @@ export default function HomeBlogPreview({ blogs = [] }) {
                 const img = getImageUrl(blog, defaultBlogs[idx + 1]?.featuredImage);
 
                 return (
-                  <div
+                  <StaggerItem
+                    preset="card-reveal"
                     key={blog._id || idx}
                     className="flex flex-col sm:flex-row gap-4 items-start sm:items-center group"
                   >
@@ -165,7 +167,7 @@ export default function HomeBlogPreview({ blogs = [] }) {
                         <span>&rarr;</span>
                       </Link>
                     </div>
-                  </div>
+                  </StaggerItem>
                 );
               })}
             </div>
@@ -180,7 +182,7 @@ export default function HomeBlogPreview({ blogs = [] }) {
               </Link>
             </div>
           </div>
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

@@ -73,6 +73,7 @@ const GalleryView = lazy(() =>
 const VALID_ROUTES = new Set([
   'dashboard',
   'settings',
+  'content-pillars',
   'navigation',
   'sliders',
   'popups',
@@ -193,7 +194,9 @@ export function AppLayout() {
       case 'contacts':
         return <ContactsView />;
       case 'settings':
-        return <SettingsView />;
+        return <SettingsView initialTab="identity" />;
+      case 'content-pillars':
+        return <SettingsView initialTab="layout" />;
       case 'navigation':
         return <NavigationView />;
       case 'seo':

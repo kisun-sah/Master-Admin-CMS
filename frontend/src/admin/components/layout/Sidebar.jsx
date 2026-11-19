@@ -56,9 +56,7 @@ const NAVIGATION_GROUPS = [
         hasSubmenu: true,
         submenus: [
           { key: 'settings', label: 'Site Settings', icon: Settings, perm: 'settings:read' },
-          { key: 'navigation', label: 'Navigation Menus', icon: Compass, perm: 'menus:read' },
-          { key: 'sliders', label: 'Sliders & Banners', icon: Sliders, perm: 'sliders:read' },
-          { key: 'popups', label: 'Popups & Alerts', icon: BellRing, perm: 'popups:read' },
+          { key: 'content-pillars', label: 'Content Pillars', icon: Layers, perm: 'settings:read' },
         ],
       },
     ],
@@ -74,23 +72,32 @@ const NAVIGATION_GROUPS = [
         submenus: [
           { key: 'pages', label: 'Pages & Blocks', icon: FileText, perm: 'pages:read' },
           { key: 'services', label: 'Services', icon: Briefcase, perm: 'services:read' },
-          { key: 'blogs', label: 'Blog & Articles', icon: BookOpen, perm: 'blogs:read' },
+          { key: 'blogs', label: 'Blogs & Articles', icon: BookOpen, perm: 'blogs:read' },
           { key: 'gallery', label: 'Organization Gallery', icon: Camera, perm: 'gallery:read' },
           { key: 'media', label: 'Media Library', icon: ImageIcon, perm: 'media:read' },
           { key: 'testimonials', label: 'Testimonials', icon: MessageSquareQuote, perm: 'testimonials:read' },
           { key: 'team', label: 'Team Members', icon: Users, perm: 'team:read' },
           { key: 'partners', label: 'Partners / Clients', icon: Building, perm: 'partners:read' },
           { key: 'faqs', label: 'FAQs', icon: HelpCircle, perm: 'faqs:read' },
+          {
+            key: 'navigation',
+            label: 'Navigation Menus',
+            icon: Compass,
+            perm: 'menus:read',
+            dividerLabel: 'Website Components',
+          },
+          { key: 'sliders', label: 'Sliders & Banners', icon: Sliders, perm: 'sliders:read' },
+          { key: 'popups', label: 'Popups & Alerts', icon: BellRing, perm: 'popups:read' },
         ],
       },
     ],
   },
   {
-    groupTitle: 'Careers & Talent',
+    groupTitle: 'Recruitment',
     items: [
       {
-        id: 'careers-talent',
-        label: 'Careers & Talent',
+        id: 'recruitment',
+        label: 'Recruitment',
         icon: GraduationCap,
         hasSubmenu: true,
         submenus: [
@@ -414,17 +421,37 @@ export function Sidebar({
                               const isSubActive = currentRoute === sub.key;
 
                               return (
-                                <li key={sub.key}>
-                                  <button
-                                    type="button"
-                                    className={`nav-subitem-btn ${isSubActive ? 'active' : ''}`}
-                                    onClick={() => handleSubItemClick(sub.key)}
-                                    aria-current={isSubActive ? 'page' : undefined}
-                                  >
-                                    <SubIcon size={15} />
-                                    <span>{sub.label}</span>
-                                  </button>
-                                </li>
+                                <React.Fragment key={sub.key}>
+                                  {sub.dividerLabel && (
+                                    <li className="nav-submenu-divider">
+                                      <span className="nav-submenu-divider-text">
+                                        {sub.dividerLabel}
+                                      </span>
+                                    </li>
+                                  )}
+                                  <li>
+                                    <button
+                                      type="button"
+                                      className={`nav-subitem-btn ${isSubActive ? 'active' : ''}`}
+                                      onClick={() => handleSubItemClick(sub.key)}
+                                      aria-current={isSubActive ? 'page' : undefined}
+                                      title={sub.label}
+                                    >
+                                      <SubIcon size={15} style={{ flexShrink: 0 }} />
+                                      <span
+                                        style={{
+                                          whiteSpace: 'nowrap',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          textAlign: 'left',
+                                          flex: 1,
+                                        }}
+                                      >
+                                        {sub.label}
+                                      </span>
+                                    </button>
+                                  </li>
+                                </React.Fragment>
                               );
                             })}
                           </ul>

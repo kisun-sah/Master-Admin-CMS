@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { resolveMediaUrl } from '../../lib/api';
+import { FadeUp, ScaleIn } from '../common/ScrollReveal';
 import {
   Sparkles,
   ArrowRight,
@@ -289,67 +290,75 @@ export default function HeroBanner({ sliders = [], loading = false }) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* ================= LEFT COLUMN: HERO INFORMATION ================= */}
           <div className="lg:col-span-6 space-y-6 text-left">
-            {/* Next-Gen Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-bold tracking-widest uppercase shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
-              <span>{badgeText}</span>
-            </div>
+            <FadeUp delay={0.05}>
+              {/* Next-Gen Badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-bold tracking-widest uppercase shadow-sm mb-4">
+                <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+                <span>{badgeText}</span>
+              </div>
 
-            {/* Powerful Professional Headline */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#172554] tracking-tight leading-[1.15]">
-              Grow Your Business with{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500">
-                AI-Powered
-              </span>{' '}
-              Digital Marketing
-            </h1>
+              {/* Powerful Professional Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#172554] tracking-tight leading-[1.15]">
+                Grow Your Business with{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-500">
+                  AI-Powered
+                </span>{' '}
+                Digital Marketing
+              </h1>
+            </FadeUp>
 
             {/* Subtitle */}
-            <p className="text-base sm:text-lg text-[#64748B] leading-relaxed max-w-xl">
-              {subtitle}
-            </p>
+            <FadeUp delay={0.15}>
+              <p className="text-base sm:text-lg text-[#64748B] leading-relaxed max-w-xl">
+                {subtitle}
+              </p>
+            </FadeUp>
 
             {/* Action Buttons */}
-            <div className="pt-2 flex flex-wrap items-center gap-4">
-              <Link
-                to="/services"
-                className="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-blue-500/25 transition-transform hover:scale-105 active:scale-95 inline-flex items-center gap-2"
-              >
-                <span>Explore Our Services</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+            <FadeUp delay={0.25}>
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/services"
+                  className="px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm sm:text-base shadow-xl shadow-blue-500/25 transition-transform hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                >
+                  <span>Explore Our Services</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
 
-              <Link
-                to="/contact"
-                className="px-7 py-4 rounded-full bg-white hover:bg-slate-50 text-[#172554] border border-slate-200/90 font-bold text-sm sm:text-base shadow-sm transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2.5"
-              >
-                <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Play className="w-3 h-3 fill-current ml-0.5" />
-                </div>
-                <span>Get a Free Consultation</span>
-              </Link>
-            </div>
+                <Link
+                  to="/contact"
+                  className="px-7 py-4 rounded-full bg-white hover:bg-slate-50 text-[#172554] border border-slate-200/90 font-bold text-sm sm:text-base shadow-sm transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2.5"
+                >
+                  <div className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                    <Play className="w-3 h-3 fill-current ml-0.5" />
+                  </div>
+                  <span>Get a Free Consultation</span>
+                </Link>
+              </div>
+            </FadeUp>
 
             {/* Trust highlights */}
-            <div className="pt-4 flex items-center flex-wrap gap-6 text-xs text-slate-500 font-medium">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>Verified ROI Strategy</span>
+            <FadeUp delay={0.35}>
+              <div className="pt-4 flex items-center flex-wrap gap-6 text-xs text-slate-500 font-medium">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>Verified ROI Strategy</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>AI Automated Delivery</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  <span>100% Dynamic CMS Control</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>AI Automated Delivery</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                <span>100% Dynamic CMS Control</span>
-              </div>
-            </div>
+            </FadeUp>
           </div>
 
           {/* ================= RIGHT COLUMN: 3D TECHNOLOGY VISUAL ================= */}
           <div className="lg:col-span-6 relative flex justify-center">
-            <div className="relative w-full max-w-lg">
+            <ScaleIn delay={0.2} className="relative w-full max-w-lg">
               {/* Main 3D Laptop with Holographic AI Visual */}
               <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-white group">
                 <img
@@ -389,7 +398,7 @@ export default function HeroBanner({ sliders = [], loading = false }) {
                   </div>
                 </div>
               </div>
-            </div>
+            </ScaleIn>
           </div>
         </div>
       </div>

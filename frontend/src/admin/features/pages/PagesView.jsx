@@ -7,7 +7,7 @@ import { SEOPanel } from '../../components/common/SEOPanel.jsx';
 import { MediaPickerModal } from '../../components/common/MediaPickerModal.jsx';
 import { api } from '../../lib/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { Plus, Edit, Trash2, Globe, Eye, Layers } from 'lucide-react';
+import { Plus, Edit, Trash2, Globe, Eye, Layers, ExternalLink } from 'lucide-react';
 
 export function PagesView() {
   const { addToast } = useAuth();
@@ -19,7 +19,11 @@ export function PagesView() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // Modal editor state
+  // Read-only View Modal state
+  const [isViewOpen, setIsViewOpen] = useState(false);
+  const [viewingPage, setViewingPage] = useState(null);
+
+  // Modal editor state (Edit / Create)
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editingPage, setEditingPage] = useState(null);
   const [formData, setFormData] = useState({
@@ -90,6 +94,18 @@ export function PagesView() {
       seo: { title: '', metaDescription: '', robots: 'index, follow' },
     });
     setIsEditorOpen(true);
+  };
+
+  const handleOpenView = async (item) => {
+    try {
+      const res = await api.get(`/pages/${item._id}`);
+      if (res.success) {
+        setViewingPage(res.data);
+        setIsViewOpen(true);
+      }
+    } catch (err) {
+      addToast(err.message, 'error');
+    }
   };
 
   const handleOpenEdit = async (item) => {
@@ -189,8 +205,34 @@ export function PagesView() {
       header: 'Title / Route',
       render: (row) => (
         <div>
-          <div style={{ fontWeight: 600 }}>{row.title}</div>
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>/{row.slug}</div>
+          <div style={{ fontWeight: 600, color: 'var(--text-main)' }}>{row.title}</div>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '5px',
+              fontSize: '12px',
+              color: 'var(--text-muted)',
+              marginTop: '2px',
+            }}
+          >
+            <span>/{row.slug}</span>
+            <a
+              href={`/${(row.slug || '').replace(/^\//, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                color: 'var(--primary)',
+                opacity: 0.85,
+              }}
+              title="Open Public Page in New Tab"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <ExternalLink size={12} />
+            </a>
+          </div>
         </div>
       ),
     },
@@ -235,20 +277,30 @@ export function PagesView() {
     {
       header: 'Actions',
       render: (row) => (
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button
+            className="btn btn-secondary btn-sm"
+            onClick={() => handleOpenView(row)}
+            title="View Page Details (Read-Only)"
+            style={{ padding: '5px 9px' }}
+          >
+            <Eye size={13} /> View
+          </button>
           <button
             className="btn btn-secondary btn-sm"
             onClick={() => handleOpenEdit(row)}
             title="Edit Page"
+            style={{ padding: '5px 9px' }}
           >
-            <Edit size={14} /> Edit
+            <Edit size={13} /> Edit
           </button>
           <button
             className="btn btn-outline-danger btn-sm"
             onClick={() => setDeleteId(row._id)}
             title="Delete Page"
+            style={{ padding: '5px 9px' }}
           >
-            <Trash2 size={14} />
+            <Trash2 size={13} />
           </button>
         </div>
       ),
@@ -567,6 +619,352 @@ export function PagesView() {
             onChange={(seoUpdates) => setFormData({ ...formData, seo: seoUpdates })}
           />
         </form>
+      </Modal>
+
+      {/* Read-Only Page View Details Modal */}
+      <Modal
+        isOpen={isViewOpen}
+        onClose={() => setIsViewOpen(false)}
+        title={viewingPage ? `Page Overview: ${viewingPage.title}` : 'Page Overview'}
+        size="lg"
+        footer={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '10px',
+            }}
+          >
+            <a
+              href={`/${(viewingPage?.slug || '').replace(/^\//, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <ExternalLink size={14} /> Open Published Page
+            </a>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setIsViewOpen(false)}
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const target = viewingPage;
+                  setIsViewOpen(false);
+                  if (target) handleOpenEdit(target);
+                }}
+              >
+                <Edit size={14} /> Edit This Page
+              </button>
+            </div>
+          </div>
+        }
+      >
+        {viewingPage && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+            {/* Top Stat Summary Card */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
+                gap: '12px',
+                padding: '14px 16px',
+                background: 'var(--surface-hover)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border)',
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-subtle)',
+                    fontWeight: 700,
+                  }}
+                >
+                  Publication Status
+                </div>
+                <div style={{ marginTop: '4px' }}>
+                  <StatusBadge status={viewingPage.status} />
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-subtle)',
+                    fontWeight: 700,
+                  }}
+                >
+                  Navigation Order
+                </div>
+                <div
+                  style={{
+                    marginTop: '4px',
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    color: 'var(--text-main)',
+                  }}
+                >
+                  #{viewingPage.order ?? 0}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-subtle)',
+                    fontWeight: 700,
+                  }}
+                >
+                  Layout Template
+                </div>
+                <div
+                  style={{
+                    marginTop: '4px',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                    color: 'var(--text-main)',
+                    textTransform: 'capitalize',
+                  }}
+                >
+                  {viewingPage.layout || 'Default'}
+                </div>
+              </div>
+              <div>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    textTransform: 'uppercase',
+                    color: 'var(--text-subtle)',
+                    fontWeight: 700,
+                  }}
+                >
+                  Last Modified
+                </div>
+                <div
+                  style={{
+                    marginTop: '4px',
+                    fontSize: '12.5px',
+                    color: 'var(--text-muted)',
+                  }}
+                >
+                  {new Date(viewingPage.updatedAt).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+
+            {/* General Info */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '16px',
+                }}
+              >
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    Title
+                  </label>
+                  <div
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      color: 'var(--text-main)',
+                      marginTop: '2px',
+                    }}
+                  >
+                    {viewingPage.title}
+                  </div>
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    URL Route Slug
+                  </label>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: 'var(--primary)',
+                      marginTop: '2px',
+                    }}
+                  >
+                    /{viewingPage.slug}
+                  </div>
+                </div>
+              </div>
+
+              {viewingPage.excerpt && (
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>
+                    Excerpt / Summary
+                  </label>
+                  <div
+                    style={{
+                      fontSize: '13.5px',
+                      color: 'var(--text-main)',
+                      marginTop: '2px',
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {viewingPage.excerpt}
+                  </div>
+                </div>
+              )}
+
+              {/* Placement Badges */}
+              <div>
+                <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)' }}>
+                  Placement & Navigation
+                </label>
+                <div style={{ display: 'flex', gap: '6px', marginTop: '4px', flexWrap: 'wrap' }}>
+                  {viewingPage.placement?.isHomepage && (
+                    <span className="badge badge-info">Designated Homepage</span>
+                  )}
+                  {viewingPage.placement?.showInHeader && (
+                    <span className="badge badge-neutral">Header Menu</span>
+                  )}
+                  {viewingPage.placement?.showInFooter && (
+                    <span className="badge badge-neutral">Footer Links</span>
+                  )}
+                  {!viewingPage.placement?.isHomepage &&
+                    !viewingPage.placement?.showInHeader &&
+                    !viewingPage.placement?.showInFooter && (
+                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        Standard (Direct URL only)
+                      </span>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            {/* Section Blocks Preview */}
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  marginBottom: '8px',
+                }}
+              >
+                <Layers size={16} color="var(--primary)" />
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-main)' }}>
+                  Content Section Blocks ({viewingPage.blocks?.length || 0})
+                </span>
+              </div>
+
+              {!viewingPage.blocks || viewingPage.blocks.length === 0 ? (
+                <div
+                  style={{
+                    fontSize: '12.5px',
+                    color: 'var(--text-muted)',
+                    fontStyle: 'italic',
+                    padding: '12px',
+                    border: '1px dashed var(--border)',
+                    borderRadius: 'var(--radius-sm)',
+                  }}
+                >
+                  No content blocks defined for this page yet.
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {viewingPage.blocks.map((b, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        padding: '10px 14px',
+                        border: '1px solid var(--border)',
+                        borderRadius: 'var(--radius-sm)',
+                        background: 'var(--surface)',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        gap: '12px',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          className="badge badge-info"
+                          style={{ textTransform: 'uppercase', fontSize: '10px' }}
+                        >
+                          {b.type}
+                        </span>
+                        <span
+                          style={{
+                            fontWeight: 600,
+                            fontSize: '13px',
+                            color: 'var(--text-main)',
+                          }}
+                        >
+                          {b.title || `Block #${idx + 1}`}
+                        </span>
+                      </div>
+                      {b.content && (
+                        <span
+                          style={{
+                            fontSize: '12px',
+                            color: 'var(--text-muted)',
+                            maxWidth: '260px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {b.content.replace(/<[^>]*>?/gm, '')}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* SEO Overview */}
+            {viewingPage.seo && (viewingPage.seo.title || viewingPage.seo.metaDescription) && (
+              <div
+                style={{
+                  padding: '12px 14px',
+                  background: 'var(--surface-hover)',
+                  borderRadius: 'var(--radius-sm)',
+                  border: '1px solid var(--border)',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    color: 'var(--text-subtle)',
+                    marginBottom: '6px',
+                  }}
+                >
+                  SEO Configuration
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-main)' }}>
+                  {viewingPage.seo.title || viewingPage.title}
+                </div>
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  {viewingPage.seo.metaDescription || 'No custom meta description provided.'}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
 
       {/* Delete Confirmation */}

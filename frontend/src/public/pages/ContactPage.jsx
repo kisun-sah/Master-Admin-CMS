@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { submitContact } from '../lib/api';
 import { useCms } from '../context/CmsContext';
 import SEOHead from '../components/layout/SEOHead';
+import { FadeUp, ScaleIn } from '../components/common/ScrollReveal';
 import {
   Mail,
   Phone,
@@ -69,7 +70,7 @@ export default function ContactPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <FadeUp className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
             <Sparkles className="w-3.5 h-3.5" />
             <span>Direct Studio Access</span>
@@ -80,12 +81,12 @@ export default function ContactPage() {
           <p className="mt-4 text-base sm:text-lg text-slate-600">
             Have a project in mind or need dedicated IT & Marketing consulting? Send us an inquiry or chat directly on WhatsApp.
           </p>
-        </div>
+        </FadeUp>
 
         {/* 2-Column Layout: Direct Details (5 cols) + Order Form (7 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start mb-16">
           {/* Left Column: Direct Contact Cards */}
-          <div className="lg:col-span-5 space-y-6">
+          <FadeUp delay={0.1} className="lg:col-span-5 space-y-6">
             <div className="bg-white rounded-3xl p-8 border border-slate-200/80 shadow-sm space-y-6">
               <h3 className="text-2xl font-bold text-slate-900">Direct Communication</h3>
               <p className="text-sm text-slate-600 leading-relaxed">
@@ -160,10 +161,10 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </FadeUp>
 
           {/* Right Column: Interactive Order / Hire Form */}
-          <div className="lg:col-span-7">
+          <ScaleIn delay={0.15} className="lg:col-span-7">
             <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-200/80 shadow-sm">
               <h3 className="text-2xl font-bold text-slate-900 mb-2">Send Project Brief</h3>
               <p className="text-sm text-slate-600 mb-8">
@@ -298,7 +299,7 @@ export default function ContactPage() {
                 </form>
               )}
             </div>
-          </div>
+          </ScaleIn>
         </div>
 
         {/* Google Maps Responsive Embed from settings.mapEmbedUrl */}

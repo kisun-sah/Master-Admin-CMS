@@ -1,5 +1,6 @@
 import React from 'react';
 import { Rocket, Smile, TrendingUp, Trophy } from 'lucide-react';
+import { CounterReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function StatsStrip({ stats = [] }) {
   const defaultStats = [
@@ -12,34 +13,38 @@ export default function StatsStrip({ stats = [] }) {
   const items = stats.length > 0 ? stats : defaultStats;
 
   return (
-    <section className="py-10 bg-white border-b border-slate-200/90 relative">
+    <section className="py-12 bg-white border-b border-slate-200/90 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <StaggerContainer
+          staggerDelay={0.1}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 divide-y sm:divide-y-0 sm:divide-x divide-slate-100"
+        >
           {items.map((stat, idx) => {
             const Icon = stat.icon || Rocket;
             return (
-              <div
+              <StaggerItem
                 key={idx}
+                preset="card-reveal"
                 className="flex items-center gap-4 px-3 sm:px-6 py-2 justify-center group"
               >
                 <div
-                  className={`w-12 h-12 rounded-2xl ${stat.color || 'text-blue-600 bg-blue-50'} flex items-center justify-center shrink-0 shadow-xs group-hover:scale-110 transition-transform`}
+                  className={`w-12 h-12 rounded-2xl ${stat.color || 'text-blue-600 bg-blue-50'} flex items-center justify-center shrink-0 shadow-xs group-hover:scale-110 transition-transform duration-300`}
                 >
                   <Icon className="w-6 h-6" />
                 </div>
 
                 <div className="text-left">
-                  <div className="text-2xl sm:text-3xl font-black text-[#172554] tracking-tight leading-none mb-1">
-                    {stat.value}
+                  <div className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight leading-none mb-1">
+                    <CounterReveal value={stat.value} duration={1.6} />
                   </div>
                   <div className="text-xs sm:text-sm text-[#64748B] font-medium">
                     {stat.label}
                   </div>
                 </div>
-              </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

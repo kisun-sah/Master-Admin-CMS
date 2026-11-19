@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Star, ChevronLeft, ChevronRight, Quote, Sparkles } from 'lucide-react';
 import { resolveMediaUrl } from '../../lib/api';
+import { FadeUp, ScaleIn } from '../common/ScrollReveal';
 
 export default function TestimonialsSlider({ testimonials = [] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -111,7 +112,7 @@ export default function TestimonialsSlider({ testimonials = [] }) {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
+        <FadeUp className="text-center max-w-3xl mx-auto mb-14">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-600 text-xs font-bold tracking-widest uppercase mb-4 shadow-sm">
             <Sparkles className="w-3.5 h-3.5" />
             <span>TESTIMONIALS</span>
@@ -124,10 +125,10 @@ export default function TestimonialsSlider({ testimonials = [] }) {
           <p className="mt-3 text-base text-[#64748B]">
             Real stories. Real results from verified clients and business partners.
           </p>
-        </div>
+        </FadeUp>
 
         {/* Testimonial Card */}
-        <div className="max-w-4xl mx-auto relative flex items-center justify-center">
+        <ScaleIn className="max-w-4xl mx-auto relative flex items-center justify-center">
           {/* Previous Arrow */}
           <button
             type="button"
@@ -189,7 +190,7 @@ export default function TestimonialsSlider({ testimonials = [] }) {
           >
             <ChevronRight className="w-6 h-6" />
           </button>
-        </div>
+        </ScaleIn>
 
         {/* Pagination Dots + Mobile Controls */}
         <div className="mt-8 flex items-center justify-center gap-2">

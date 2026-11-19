@@ -11,6 +11,7 @@ import {
   Headphones,
   CheckCircle2,
 } from 'lucide-react';
+import { FadeUp, ScaleIn, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export default function AboutUsAgencySection() {
   const { settings } = useCms();
@@ -55,7 +56,7 @@ export default function AboutUsAgencySection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 xl:gap-12 items-center">
           {/* ================= LEFT COLUMN: INTRODUCTION ================= */}
-          <div className="lg:col-span-4 space-y-6 text-left">
+          <FadeUp delay={0.05} className="lg:col-span-4 space-y-6 text-left">
             {/* Sleek Pill Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200/90 text-blue-600 text-xs font-bold tracking-widest uppercase shadow-xs">
               <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
@@ -86,10 +87,10 @@ export default function AboutUsAgencySection() {
                 <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
             </div>
-          </div>
+          </FadeUp>
 
           {/* ================= CENTER COLUMN: TEAM COLLABORATION IMAGE ================= */}
-          <div className="lg:col-span-4 relative flex justify-center">
+          <ScaleIn delay={0.15} className="lg:col-span-4 relative flex justify-center">
             <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-100 group">
               <img
                 src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
@@ -109,15 +110,20 @@ export default function AboutUsAgencySection() {
                 </div>
               </div>
             </div>
-          </div>
+          </ScaleIn>
 
           {/* ================= RIGHT COLUMN: 4 FEATURE CARDS ================= */}
-          <div className="lg:col-span-4 space-y-3.5">
+          <StaggerContainer
+            staggerDelay={0.09}
+            delayChildren={0.1}
+            className="lg:col-span-4 space-y-3.5"
+          >
             {features.map((feat, idx) => {
               const Icon = feat.icon;
               return (
-                <div
+                <StaggerItem
                   key={idx}
+                  preset="card-reveal"
                   className="bg-[#F8FAFC] hover:bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 hover:border-blue-300/80 shadow-xs hover:shadow-lg hover:shadow-blue-500/5 transition-all duration-300 flex items-start gap-4 group hover:-translate-y-0.5"
                 >
                   <div
@@ -134,10 +140,10 @@ export default function AboutUsAgencySection() {
                       {feat.desc}
                     </p>
                   </div>
-                </div>
+                </StaggerItem>
               );
             })}
-          </div>
+          </StaggerContainer>
         </div>
       </div>
     </section>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getGalleryAlbums, getGalleryImages, resolveMediaUrl } from '../lib/api';
 import SEOHead from '../components/layout/SEOHead';
 import LightboxModal from '../components/common/LightboxModal';
+import { FadeUp, StaggerContainer, StaggerItem } from '../components/common/ScrollReveal';
 import {
   Sparkles,
   Layers,
@@ -255,7 +256,7 @@ export default function GalleryPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10">
+        <FadeUp className="text-center max-w-3xl mx-auto mb-10">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-100 text-[var(--brand-primary,#3B66D4)] text-xs font-bold uppercase tracking-wider mb-4">
             <Camera className="w-3.5 h-3.5" />
             <span>Memories & Captured Milestones</span>
@@ -266,7 +267,7 @@ export default function GalleryPage() {
           <p className="mt-4 text-base sm:text-lg text-slate-600">
             A visual retrospective of our journey, corporate summits, team retreats, festive celebrations, and memorable stories.
           </p>
-        </div>
+        </FadeUp>
 
         {/* Dual Mode Switcher: Categorized Albums vs All Photos Wall */}
         <div className="flex items-center justify-center gap-4 mb-8">
@@ -322,7 +323,7 @@ export default function GalleryPage() {
 
         {/* Tab 1: Memory Albums Grid */}
         {activeTab === 'albums' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredAlbums.map((item, idx) => {
               const imageSrc = resolveMediaUrl(
                 item.coverImage ||
@@ -342,7 +343,8 @@ export default function GalleryPage() {
                 : 'Recent Memory';
 
               return (
-                <div
+                <StaggerItem
+                  preset="card-reveal"
                   key={item._id || idx}
                   className="bg-white rounded-2xl overflow-hidden border border-slate-200/80 flex flex-col justify-between group hover:shadow-xl transition-all duration-300 shadow-sm"
                 >
@@ -413,10 +415,10 @@ export default function GalleryPage() {
                       <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>
-                </div>
+                </StaggerItem>
               );
             })}
-          </div>
+          </StaggerContainer>
         )}
 
         {/* Tab 2: Masonry Photo Wall (All Photographs) */}

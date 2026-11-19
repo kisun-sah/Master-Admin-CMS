@@ -17,11 +17,17 @@ const DEFAULT_HOMEPAGE_SECTIONS = [
   { id: 'cta', name: 'Bottom Consultation CTA Banner', enabled: true, order: 10, animation: 'fade-up' },
 ];
 
-export function SettingsView() {
+export function SettingsView({ initialTab = 'identity' }) {
   const { addToast } = useAuth();
   const { settings: globalSettings, saveSettings, previewTheme, resetTheme } = useSettings();
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('identity'); // 'identity' | 'brand' | 'contact' | 'social' | 'seo'
+  const [activeTab, setActiveTab] = useState(initialTab); // 'identity' | 'brand' | 'contact' | 'social' | 'seo' | 'layout'
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   const [settings, setSettings] = useState({
     siteName: '',
@@ -227,7 +233,7 @@ export function SettingsView() {
             className={`tab-btn ${activeTab === 'layout' ? 'active' : ''}`}
             onClick={() => setActiveTab('layout')}
           >
-            Homepage Layout & Animations
+            Content Pillars & Homepage Layout
           </button>
         </div>
 

@@ -372,11 +372,10 @@ export default function Service3dCarousel({ services = [] }) {
                 >
                   {/* Clean Light-Mode Card Shell */}
                   <div
-                    className={`group bg-white rounded-[32px] p-3.5 transition-all duration-500 border overflow-hidden ${
-                      isCenter
-                        ? 'border-slate-200/90 shadow-[0_25px_60px_-15px_rgba(37,99,235,0.18),0_12px_24px_-8px_rgba(15,23,42,0.06)] ring-1 ring-blue-500/10'
-                        : 'border-slate-200/70 shadow-[0_15px_35px_-10px_rgba(15,23,42,0.08)] hover:border-blue-300'
-                    }`}
+                    className={`group bg-white rounded-[32px] p-3.5 transition-all duration-500 border overflow-hidden ${isCenter
+                      ? 'border-slate-200/90 shadow-[0_25px_60px_-15px_rgba(37,99,235,0.18),0_12px_24px_-8px_rgba(15,23,42,0.06)] ring-1 ring-blue-500/10'
+                      : 'border-slate-200/70 shadow-[0_15px_35px_-10px_rgba(15,23,42,0.08)] hover:border-blue-300'
+                      }`}
                   >
                     {/* Visual Area: Actual CMS Image or Clean Neutral Surface */}
                     <div className="relative w-full h-[200px] sm:h-[220px] rounded-[22px] overflow-hidden bg-slate-100 transition-all duration-500">
@@ -472,11 +471,10 @@ export default function Service3dCarousel({ services = [] }) {
                     if (diff < 0) diff += count;
                     setStep((prev) => prev + diff);
                   }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    isActive
-                      ? 'w-7 bg-blue-600 shadow-sm'
-                      : 'w-2 bg-blue-200/90 hover:bg-blue-300'
-                  }`}
+                  className={`h-2 rounded-full transition-all duration-300 ${isActive
+                    ? 'w-7 bg-blue-600 shadow-sm'
+                    : 'w-2 bg-blue-200/90 hover:bg-blue-300'
+                    }`}
                   aria-label={`Go to service ${dotIdx + 1}`}
                 />
               );
@@ -486,11 +484,9 @@ export default function Service3dCarousel({ services = [] }) {
           {/* Autoplay Status Indicator: Minimal & Elegant */}
           <div className="text-xs text-[#64748B] flex items-center gap-2 font-medium">
             <span
-              className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                isCardHovered ? 'bg-amber-400' : 'bg-emerald-500 animate-pulse'
-              }`}
+              className={`w-2 h-2 rounded-full transition-colors duration-300 ${isCardHovered ? 'bg-amber-400' : 'bg-emerald-500 animate-pulse'
+                }`}
             />
-            <span>{isCardHovered ? 'Paused' : 'Auto-rotating'}</span>
           </div>
 
           {/* View All Services Link */}
