@@ -3,9 +3,18 @@
  * Connects directly to backend /api/v1/public/* (all 21 endpoints)
  */
 
+function normalizeOrigin(origin) {
+  if (!origin) return '';
+  let clean = origin.trim().replace(/\/+$/, '');
+  if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+    clean = `https://${clean}`;
+  }
+  return clean;
+}
+
 function resolveBackendOrigin() {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL) {
-    return import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, '');
+    return normalizeOrigin(import.meta.env.VITE_BACKEND_URL);
   }
   if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
     return 'https://kbr-digital-api.onrender.com';
@@ -15,10 +24,11 @@ function resolveBackendOrigin() {
 
 function resolvePublicApiBase() {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+    return normalizeOrigin(import.meta.env.VITE_API_URL);
   }
+  const origin = resolveBackendOrigin();
   if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
-    return 'https://kbr-digital-api.onrender.com/api/v1/public';
+    return `${origin}/api/v1/public`;
   }
   return '/api/v1/public';
 }

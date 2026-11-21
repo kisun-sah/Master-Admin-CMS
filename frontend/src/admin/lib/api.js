@@ -1,3 +1,12 @@
+function normalizeOrigin(origin) {
+  if (!origin) return '';
+  let clean = origin.trim().replace(/\/+$/, '');
+  if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+    clean = `https://${clean}`;
+  }
+  return clean;
+}
+
 /**
  * Master Admin CMS — Admin API Client
  * Determines API origin based on environment or production hostname.
@@ -5,10 +14,11 @@
 function resolveApiBase() {
   if (typeof import.meta !== 'undefined') {
     if (import.meta.env?.VITE_API_URL) {
-      return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+      return normalizeOrigin(import.meta.env.VITE_API_URL);
     }
     if (import.meta.env?.VITE_BACKEND_URL) {
-      return `${import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, '')}/api/v1`;
+      const origin = normalizeOrigin(import.meta.env.VITE_BACKEND_URL);
+      return `${origin}/api/v1`;
     }
   }
 
@@ -36,6 +46,10 @@ export async function apiRequest(endpoint, options = {}) {
     } else {
       url = `${API_BASE}${cleanEndpoint}`;
     }
+  }
+
+  if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+    url = `https://${url}`;
   }
 
   const defaultHeaders = {
