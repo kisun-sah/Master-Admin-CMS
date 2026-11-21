@@ -1,8 +1,40 @@
+import mongoose from 'mongoose';
 import { User } from '../models/User.js';
 import { Role } from '../models/Role.js';
 
 export async function requireAuth(req, res, next) {
-  if (!req.session || !req.session.userId) {
+  let userId = req.session?.userId;
+
+  // Header token fallback: supports cross-origin setups where browsers block 3rd-party cookies
+  if (!userId) {
+    const headerToken =
+      req.headers['x-session-id'] ||
+      (req.headers['authorization']?.startsWith('Bearer ')
+        ? req.headers['authorization'].slice(7).trim()
+        : null);
+
+    if (headerToken) {
+      try {
+        const sessionRecord = await mongoose.connection.collection('sessions').findOne({ _id: headerToken });
+        if (sessionRecord && sessionRecord.session) {
+          const sess =
+            typeof sessionRecord.session === 'string'
+              ? JSON.parse(sessionRecord.session)
+              : sessionRecord.session;
+          if (sess.userId) {
+            userId = sess.userId;
+            if (req.session) {
+              req.session.userId = userId;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('[requireAuth] Header session lookup failed:', err.message);
+      }
+    }
+  }
+
+  if (!userId) {
     return res.status(401).json({
       success: false,
       error: {
@@ -13,9 +45,9 @@ export async function requireAuth(req, res, next) {
   }
 
   try {
-    const user = await User.findById(req.session.userId);
+    const user = await User.findById(userId);
     if (!user || user.status !== 'active') {
-      req.session.destroy();
+      if (req.session) req.session.destroy();
       return res.status(401).json({
         success: false,
         error: {

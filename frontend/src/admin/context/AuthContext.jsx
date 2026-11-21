@@ -39,6 +39,9 @@ export function AuthProvider({ children }) {
     checkAuth();
 
     const handleAuthExpired = () => {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('cms_auth_token');
+      }
       setUser(null);
       addToast('Your session has expired. Please sign in again.', 'warning');
     };
@@ -52,6 +55,12 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const res = await api.post('/auth/login', { email, password });
     if (res.success && res.data?.user) {
+      if (typeof localStorage !== 'undefined') {
+        const token = res.data?.token || res.data?.sessionId;
+        if (token) {
+          localStorage.setItem('cms_auth_token', token);
+        }
+      }
       setUser(res.data.user);
       addToast(`Welcome back, ${res.data.user.displayName}!`, 'success');
       return res.data.user;
@@ -65,6 +74,9 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.warn('Logout error', err);
     } finally {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('cms_auth_token');
+      }
       setUser(null);
       addToast('Signed out safely.', 'info');
     }

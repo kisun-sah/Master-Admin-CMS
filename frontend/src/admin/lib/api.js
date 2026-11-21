@@ -56,6 +56,12 @@ export async function apiRequest(endpoint, options = {}) {
     Accept: 'application/json',
   };
 
+  const token = typeof localStorage !== 'undefined' ? localStorage.getItem('cms_auth_token') : null;
+  if (token) {
+    defaultHeaders['Authorization'] = `Bearer ${token}`;
+    defaultHeaders['X-Session-Id'] = token;
+  }
+
   if (!(options.body instanceof FormData)) {
     defaultHeaders['Content-Type'] = 'application/json';
   }

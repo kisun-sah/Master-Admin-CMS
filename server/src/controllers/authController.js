@@ -78,6 +78,8 @@ export async function login(req, res, next) {
       res.status(200).json({
         success: true,
         data: {
+          token: req.sessionID,
+          sessionId: req.sessionID,
           user: {
             id: user._id,
             email: user.email,
