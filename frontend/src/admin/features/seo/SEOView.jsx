@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../../lib/api.js';
+import { api, apiRequest } from '../../lib/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { DataTable } from '../../components/ui/DataTable.jsx';
 import { Modal } from '../../components/ui/Modal.jsx';
@@ -281,9 +281,10 @@ export function SEOView({ onNavigate }) {
   // Export CSV
   const handleExportCsv = async () => {
     try {
-      const res = await fetch('/api/v1/seo/redirects/export/csv', { credentials: 'include' });
-      if (!res.ok) throw new Error('Failed to export CSV file.');
-      const blob = await res.blob();
+      const token = typeof localStorage !== 'undefined' ? localStorage.getItem('cms_auth_token') : null;
+      const headers = token ? { Authorization: `Bearer ${token}`, 'X-Session-Id': token } : {};
+      const res = await apiRequest('/seo/redirects/export/csv', { headers });
+      const blob = res instanceof Blob ? res : new Blob([typeof res === 'string' ? res : JSON.stringify(res)], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
