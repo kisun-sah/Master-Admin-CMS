@@ -109,11 +109,12 @@ export async function logout(req, res, next) {
 
     req.session.destroy((err) => {
       if (err) return next(err);
+      const isProduction = process.env.NODE_ENV === 'production';
       res.clearCookie(process.env.COOKIE_NAME || 'master_cms_session', {
         path: '/',
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+        secure: isProduction,
+        sameSite: isProduction ? (process.env.COOKIE_SAMESITE || 'none') : 'lax',
       });
       return res.status(200).json({
         success: true,

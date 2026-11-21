@@ -1,7 +1,42 @@
-const API_BASE = '/api/v1';
+/**
+ * Master Admin CMS — Admin API Client
+ * Determines API origin based on environment or production hostname.
+ */
+function resolveApiBase() {
+  if (typeof import.meta !== 'undefined') {
+    if (import.meta.env?.VITE_API_URL) {
+      return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+    }
+    if (import.meta.env?.VITE_BACKEND_URL) {
+      return `${import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, '')}/api/v1`;
+    }
+  }
+
+  // Auto-detect production Render deployment hostname
+  if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
+    return 'https://kbr-digital-api.onrender.com/api/v1';
+  }
+
+  // Local development default (proxied by Vite dev server to localhost:5000)
+  return '/api/v1';
+}
+
+const API_BASE = resolveApiBase();
 
 export async function apiRequest(endpoint, options = {}) {
-  const url = endpoint.startsWith('http') ? endpoint : `${API_BASE}${endpoint}`;
+  let url;
+  if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+    url = endpoint;
+  } else {
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    // Prevent duplicate /api/v1 when calling endpoints that already include it
+    if (cleanEndpoint.startsWith('/api/v1')) {
+      const baseOrigin = API_BASE.replace(/\/api\/v1$/, '');
+      url = baseOrigin ? `${baseOrigin}${cleanEndpoint}` : cleanEndpoint;
+    } else {
+      url = `${API_BASE}${cleanEndpoint}`;
+    }
+  }
 
   const defaultHeaders = {
     Accept: 'application/json',

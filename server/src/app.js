@@ -13,6 +13,10 @@ import { generateRobotsTxt, generateSitemapXml } from './controllers/seoControll
 
 const app = express();
 
+// Trust reverse proxy headers (Render, Heroku, Nginx, Cloudflare)
+// Crucial for secure session cookies and accurate client IP resolution behind SSL proxies
+app.set('trust proxy', 1);
+
 // Security HTTP headers
 app.use(
   helmet({
@@ -21,23 +25,46 @@ app.use(
   })
 );
 
-// CORS configuration for admin SPA & future frontends
-const allowedOrigins = [
-  process.env.CLIENT_URL || 'http://localhost:5173',
+// CORS configuration with strict production allowlist
+const configuredClients = (process.env.CLIENT_URL || '')
+  .split(',')
+  .map((url) => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+
+const defaultAllowedOrigins = [
+  'https://kbrdigital.onrender.com',
+  'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
 ];
 
+const allowedOrigins = Array.from(new Set([...configuredClients, ...defaultAllowedOrigins]));
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, true); // Dev flexible origin
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
+      if (!origin) {
+        return callback(null, true);
       }
+
+      const normalizedOrigin = origin.replace(/\/+$/, '');
+      if (allowedOrigins.includes(normalizedOrigin)) {
+        return callback(null, true);
+      }
+
+      // Allow localhost dev origins in non-production environments
+      if (process.env.NODE_ENV !== 'production') {
+        if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalizedOrigin)) {
+          return callback(null, true);
+        }
+      }
+
+      return callback(new Error(`Origin ${origin} is not allowed by CORS policy.`));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'X-Requested-With'],
   })
 );
 

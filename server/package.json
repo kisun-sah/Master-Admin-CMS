@@ -8,6 +8,7 @@
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
     "seed": "node src/utils/seed.js",
+    "audit": "node src/utils/auditDb.js",
     "test": "node --test tests/api.test.js"
   },
   "keywords": [

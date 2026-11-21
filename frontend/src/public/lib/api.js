@@ -3,8 +3,28 @@
  * Connects directly to backend /api/v1/public/* (all 21 endpoints)
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || '/api/v1/public';
-const BACKEND_ORIGIN = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+function resolveBackendOrigin() {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL.replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
+    return 'https://kbr-digital-api.onrender.com';
+  }
+  return 'http://localhost:5000';
+}
+
+function resolvePublicApiBase() {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL.replace(/\/+$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
+    return 'https://kbr-digital-api.onrender.com/api/v1/public';
+  }
+  return '/api/v1/public';
+}
+
+const BACKEND_ORIGIN = resolveBackendOrigin();
+const API_BASE = resolvePublicApiBase();
 
 /**
  * Resolves static or uploaded media paths to fully qualified URLs
