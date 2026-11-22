@@ -11,6 +11,39 @@ function normalizeOrigin(origin) {
  * Master Admin CMS — Admin API Client
  * Determines API origin based on environment or production hostname.
  */
+export function resolveBackendOrigin() {
+  if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL) {
+    return normalizeOrigin(import.meta.env.VITE_BACKEND_URL);
+  }
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'kbrdigital.onrender.com') {
+      return 'https://kbr-digital-api.onrender.com';
+    }
+    // If browsing via LAN IP or hostname (e.g. 192.168.18.212:5173), point backend to that same host on port 5000
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return `http://${window.location.hostname}:5000`;
+    }
+  }
+  return 'http://localhost:5000';
+}
+
+/**
+ * Resolves static or uploaded media paths to fully qualified URLs in Admin UI
+ */
+export function resolveMediaUrl(url) {
+  if (!url) return '';
+  if (
+    url.startsWith('http://') ||
+    url.startsWith('https://') ||
+    url.startsWith('data:') ||
+    url.startsWith('blob:')
+  ) {
+    return url;
+  }
+  const cleanPath = url.startsWith('/') ? url : `/${url}`;
+  return `${resolveBackendOrigin()}${cleanPath}`;
+}
+
 function resolveApiBase() {
   if (typeof import.meta !== 'undefined') {
     if (import.meta.env?.VITE_API_URL) {
@@ -25,6 +58,15 @@ function resolveApiBase() {
   // Auto-detect production Render deployment hostname
   if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
     return 'https://kbr-digital-api.onrender.com/api/v1';
+  }
+
+  // If browsing via LAN IP (e.g. 192.168.18.212:5173), point directly to backend API on that LAN IP port 5000
+  if (
+    typeof window !== 'undefined' &&
+    window.location.hostname !== 'localhost' &&
+    window.location.hostname !== '127.0.0.1'
+  ) {
+    return `http://${window.location.hostname}:5000/api/v1`;
   }
 
   // Local development default (proxied by Vite dev server to localhost:5000)

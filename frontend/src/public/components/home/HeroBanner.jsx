@@ -41,6 +41,12 @@ export default function HeroBanner({ sliders = [], loading = false }) {
   const isVideoMode = Boolean(videoSlide);
   const isImageSliderMode = !isVideoMode && imageSlides.length > 0;
 
+  const [videoError, setVideoError] = useState(false);
+
+  useEffect(() => {
+    setVideoError(false);
+  }, [videoSlide?.mediaUrl]);
+
   // Active slide index for image carousel - ALWAYS deterministically initialized to 0
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -104,26 +110,34 @@ export default function HeroBanner({ sliders = [], loading = false }) {
       <section className="relative w-full overflow-hidden bg-slate-900">
         <div className="relative w-full h-[90vh] min-h-[640px] flex items-center justify-center">
           <div className="absolute inset-0 z-0 overflow-hidden">
-            <video
-              key={videoSlide.mediaUrl}
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            >
-              {videoSlide.mobileMediaUrl && (
+            {!videoError ? (
+              <video
+                key={videoSlide.mediaUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                onError={() => setVideoError(true)}
+              >
+                {videoSlide.mobileMediaUrl && (
+                  <source
+                    src={resolveMediaUrl(videoSlide.mobileMediaUrl)}
+                    media="(max-width: 767px)"
+                    type="video/mp4"
+                  />
+                )}
                 <source
-                  src={resolveMediaUrl(videoSlide.mobileMediaUrl)}
-                  media="(max-width: 767px)"
+                  src={resolveMediaUrl(videoSlide.mediaUrl)}
                   type="video/mp4"
                 />
-              )}
-              <source
-                src={resolveMediaUrl(videoSlide.mediaUrl)}
-                type="video/mp4"
-              />
-            </video>
+              </video>
+            ) : (
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#070D1F] via-[#0A192F] to-[#0F172A]">
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-indigo-600/20 via-cyan-500/20 to-purple-600/15 rounded-full blur-[140px]" />
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px]" />
+              </div>
+            )}
             <div className="absolute inset-0 bg-black/40 backdrop-blur-[0.5px]" />
           </div>
 

@@ -21,6 +21,11 @@ import {
 
 export default function Footer() {
   const { settings, navigation, pages } = useCms();
+  const [logoFailed, setLogoFailed] = React.useState(false);
+
+  React.useEffect(() => {
+    setLogoFailed(false);
+  }, [settings?.logo]);
 
   const col1 = navigation?.find((m) => m.location === 'footer_col_1');
   const col2 = navigation?.find((m) => m.location === 'footer_col_2');
@@ -80,17 +85,22 @@ export default function Footer() {
           {/* ================= COLUMN 1: BRAND LOGO & BIO ================= */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              {settings?.logo ? (
+              {settings?.logo && !logoFailed ? (
                 <div className="bg-white p-2 rounded-xl inline-block shadow-sm">
                   <img
                     src={resolveMediaUrl(settings.logo)}
                     alt={settings.siteName || 'Logo'}
                     className="h-10 w-auto max-w-[160px] object-contain"
+                    onError={() => setLogoFailed(true)}
                   />
                 </div>
               ) : (
                 <div className="w-12 h-12 rounded-xl bg-white text-[#1E3A8A] flex items-center justify-center font-black text-xl shadow-md">
-                  <Code2 className="w-7 h-7" />
+                  {settings?.siteName ? (
+                    <span className="text-sm font-extrabold">{settings.siteName.slice(0, 3).toUpperCase()}</span>
+                  ) : (
+                    <Code2 className="w-7 h-7" />
+                  )}
                 </div>
               )}
             </Link>

@@ -16,8 +16,14 @@ function resolveBackendOrigin() {
   if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_BACKEND_URL) {
     return normalizeOrigin(import.meta.env.VITE_BACKEND_URL);
   }
-  if (typeof window !== 'undefined' && window.location.hostname === 'kbrdigital.onrender.com') {
-    return 'https://kbr-digital-api.onrender.com';
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'kbrdigital.onrender.com') {
+      return 'https://kbr-digital-api.onrender.com';
+    }
+    // If browsing via LAN IP or hostname (e.g. 192.168.18.212:5173), point backend to that same host on port 5000
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      return `http://${window.location.hostname}:5000`;
+    }
   }
   return 'http://localhost:5000';
 }
@@ -50,11 +56,6 @@ export function resolveMediaUrl(url) {
     return url;
   }
   const cleanPath = url.startsWith('/') ? url : `/${url}`;
-  // In single-origin production deployment without explicit custom backend origin,
-  // relative paths (/uploads/...) route through same-origin reverse proxy, preventing HTTPS mixed content blocks.
-  if (import.meta.env.PROD && !import.meta.env.VITE_BACKEND_URL) {
-    return cleanPath;
-  }
   return `${BACKEND_ORIGIN}${cleanPath}`;
 }
 

@@ -18,6 +18,7 @@ import {
 export default function HeroSection({ sliders = [] }) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   // Default slide fallback if CMS has no active slider yet
   const defaultSlide = {
@@ -49,7 +50,7 @@ export default function HeroSection({ sliders = [] }) {
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-16 overflow-hidden">
       {/* 1. Background Video / Image Layer (35MB Video Reel support) */}
-      {hasVideoBg ? (
+      {hasVideoBg && !videoError ? (
         <div className="absolute inset-0 z-0 overflow-hidden">
           <video
             key={slide.mediaUrl}
@@ -58,6 +59,7 @@ export default function HeroSection({ sliders = [] }) {
             muted
             playsInline
             className="w-full h-full object-cover opacity-25 filter blur-[1px] scale-105"
+            onError={() => setVideoError(true)}
           >
             {slide.mobileMediaUrl && (
               <source

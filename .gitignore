@@ -35,8 +35,8 @@ build/
 */build/
 
 # Uploads & Media
-server/uploads/*
-!server/uploads/.gitkeep
+# Essential upload assets tracked for Render deployment
+server/uploads/*.tmp
 private_uploads/*
 */private_uploads/*
 !**/private_uploads/**/.gitkeep

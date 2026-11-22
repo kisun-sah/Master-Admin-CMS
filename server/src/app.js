@@ -25,9 +25,18 @@ app.use(
   })
 );
 
-// CORS configuration with strict production allowlist
-const configuredClients = (process.env.CLIENT_URL || '')
-  .split(',')
+// Helper to identify local loopback or private LAN development origins (RFC 1918)
+const isLocalOrLanDevOrigin = (origin) => {
+  return /^http:\/\/(localhost|127\.0\.0\.1|192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})(:\d+)?$/.test(
+    origin
+  );
+};
+
+// CORS configuration with environment-aware allowlist and LAN development support
+const configuredClients = [
+  ...(process.env.CLIENT_URL || '').split(','),
+  ...(process.env.ALLOWED_ORIGINS || '').split(','),
+]
   .map((url) => url.trim().replace(/\/+$/, ''))
   .filter(Boolean);
 
@@ -53,11 +62,9 @@ app.use(
         return callback(null, true);
       }
 
-      // Allow localhost dev origins in non-production environments
-      if (process.env.NODE_ENV !== 'production') {
-        if (/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(normalizedOrigin)) {
-          return callback(null, true);
-        }
+      // Allow any local network LAN origin (e.g. 192.168.18.212:5173) in dev or LAN testing
+      if (isLocalOrLanDevOrigin(normalizedOrigin)) {
+        return callback(null, true);
       }
 
       return callback(new Error(`Origin ${origin} is not allowed by CORS policy.`));
@@ -81,9 +88,25 @@ app.use(cookieParser());
 // Server-side session with MongoStore
 app.use(configureSession());
 
-// Static uploads serving
+// Static uploads serving with fallback handler to prevent broken image / JSON error responses
 const uploadDir = path.resolve(process.cwd(), process.env.UPLOAD_DIR || 'uploads');
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', express.static(uploadDir, { maxAge: '1d' }));
+app.use('/uploads', (req, res) => {
+  // If static file wasn't found in uploads directory
+  if (/\.(png|jpg|jpeg|webp|gif|svg|ico)$/i.test(req.path) || req.headers.accept?.includes('image/')) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+    res.status(404).send(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200" fill="#f1f5f9">
+        <rect width="200" height="200" rx="8" fill="#e2e8f0"/>
+        <path d="M70 120 L95 90 L120 115 L135 100 L160 130 Z" fill="#94a3b8"/>
+        <circle cx="85" cy="75" r="10" fill="#94a3b8"/>
+        <text x="50%" y="85%" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">Image Not Available</text>
+      </svg>`
+    );
+  } else {
+    res.status(404).json({ success: false, error: { code: 'NOT_FOUND', message: 'Media file not found' } });
+  }
+});
 
 // API health endpoint (public)
 app.get('/api/health', (req, res) => {

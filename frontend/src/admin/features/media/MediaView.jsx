@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { api } from '../../lib/api.js';
+import { api, resolveMediaUrl } from '../../lib/api.js';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { Modal } from '../../components/ui/Modal.jsx';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog.jsx';
@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Copy,
   Info,
+  Image as ImageIcon,
 } from 'lucide-react';
 
 export function MediaView() {
@@ -295,11 +296,44 @@ export function MediaView() {
                 }}
               >
                 {asset.mediaType === 'image' ? (
-                  <img
-                    src={asset.url}
-                    alt={asset.altText || asset.originalName}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
+                  <>
+                    <img
+                      src={resolveMediaUrl(asset.url)}
+                      alt={asset.altText || asset.originalName}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        const fallback = e.currentTarget.parentElement?.querySelector('.img-fallback');
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
+                    />
+                    <div
+                      className="img-fallback"
+                      style={{
+                        display: 'none',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '12px',
+                        textAlign: 'center',
+                      }}
+                    >
+                      <ImageIcon size={32} color="var(--text-muted)" />
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          color: 'var(--text-muted)',
+                          marginTop: '4px',
+                          maxWidth: '120px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {asset.originalName}
+                      </span>
+                    </div>
+                  </>
                 ) : asset.mediaType === 'video' ? (
                   <div style={{ textAlign: 'center' }}>
                     <Film size={36} color="var(--primary)" />
@@ -374,11 +408,24 @@ export function MediaView() {
                         }}
                       >
                         {asset.mediaType === 'image' ? (
-                          <img
-                            src={asset.url}
-                            alt=""
-                            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          />
+                          <>
+                            <img
+                              src={resolveMediaUrl(asset.url)}
+                              alt=""
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                                const fallback = e.currentTarget.parentElement?.querySelector('.list-fallback');
+                                if (fallback) fallback.style.display = 'flex';
+                              }}
+                            />
+                            <div
+                              className="list-fallback"
+                              style={{ display: 'none', alignItems: 'center', justifyContent: 'center' }}
+                            >
+                              <ImageIcon size={18} color="var(--text-muted)" />
+                            </div>
+                          </>
                         ) : asset.mediaType === 'video' ? (
                           <Film size={18} color="var(--primary)" />
                         ) : (
@@ -457,14 +504,37 @@ export function MediaView() {
               }}
             >
               {selectedAsset.mediaType === 'image' ? (
-                <img
-                  src={selectedAsset.url}
-                  alt={selectedAsset.altText || ''}
-                  style={{ maxWidth: '100%', maxHeight: '360px', objectFit: 'contain' }}
-                />
+                <>
+                  <img
+                    src={resolveMediaUrl(selectedAsset.url)}
+                    alt={selectedAsset.altText || ''}
+                    style={{ maxWidth: '100%', maxHeight: '360px', objectFit: 'contain' }}
+                    onError={(e) => {
+                      e.currentTarget.style.display = 'none';
+                      const fallback = e.currentTarget.parentElement?.querySelector('.modal-fallback');
+                      if (fallback) fallback.style.display = 'flex';
+                    }}
+                  />
+                  <div
+                    className="modal-fallback"
+                    style={{
+                      display: 'none',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '24px',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <ImageIcon size={48} color="var(--text-muted)" />
+                    <p style={{ marginTop: '8px', fontSize: '13px', color: 'var(--text-muted)' }}>
+                      Image preview not available
+                    </p>
+                  </div>
+                </>
               ) : selectedAsset.mediaType === 'video' ? (
                 <video
-                  src={selectedAsset.url}
+                  src={resolveMediaUrl(selectedAsset.url)}
                   controls
                   style={{ width: '100%', maxHeight: '360px' }}
                 />

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from '../ui/Modal.jsx';
-import { api } from '../../lib/api.js';
+import { api, resolveMediaUrl } from '../../lib/api.js';
 import { UploadCloud, Check, Film, Image as ImageIcon, FileText } from 'lucide-react';
 
 export function MediaPickerModal({ isOpen, onClose, onSelect, currentUrl = '' }) {
@@ -165,11 +165,46 @@ export function MediaPickerModal({ isOpen, onClose, onSelect, currentUrl = '' })
                     }}
                   >
                     {asset.mediaType === 'image' ? (
-                      <img
-                        src={asset.url}
-                        alt={asset.altText || asset.originalName}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      />
+                      <>
+                        <img
+                          src={resolveMediaUrl(asset.url)}
+                          alt={asset.altText || asset.originalName}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            const fallback = e.currentTarget.parentElement?.querySelector('.img-fallback');
+                            if (fallback) fallback.style.display = 'flex';
+                          }}
+                        />
+                        <div
+                          className="img-fallback"
+                          style={{
+                            display: 'none',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '8px',
+                            textAlign: 'center',
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        >
+                          <ImageIcon size={24} color="var(--text-muted)" />
+                          <span
+                            style={{
+                              fontSize: '10px',
+                              color: 'var(--text-muted)',
+                              marginTop: '4px',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                              maxWidth: '90%',
+                            }}
+                          >
+                            {asset.originalName}
+                          </span>
+                        </div>
+                      </>
                     ) : asset.mediaType === 'video' ? (
                       <div style={{ textAlign: 'center', padding: '8px' }}>
                         <Film size={32} color="var(--primary)" />

@@ -24,7 +24,12 @@ export default function Navbar() {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
   const [mobileServicesList, setMobileServicesList] = useState([]);
+  const [logoFailed, setLogoFailed] = useState(false);
   const megaMenuTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    setLogoFailed(false);
+  }, [settings?.logo]);
 
   // Scroll detection: Transition from transparent over banner to fixed solid white
   useEffect(() => {
@@ -177,15 +182,20 @@ export default function Navbar() {
               }`}
             title={settings?.siteName || 'Home'}
           >
-            {settings?.logo ? (
+            {settings?.logo && !logoFailed ? (
               <img
                 src={resolveMediaUrl(settings.logo)}
                 alt={settings.siteName || 'Logo'}
                 className="w-full h-full max-h-full max-w-full object-contain filter drop-shadow-sm transition-transform duration-300 group-hover:scale-105"
+                onError={() => setLogoFailed(true)}
               />
             ) : (
-              <div className="w-full h-full rounded-b-xl bg-gradient-to-tr from-cyan-500 to-[var(--brand-primary,#3B66D4)] flex items-center justify-center text-white shadow-sm">
-                <Code2 className="w-8 h-8 sm:w-10 sm:h-10" />
+              <div className="w-full h-full rounded-b-xl bg-gradient-to-tr from-cyan-500 to-[var(--brand-primary,#3B66D4)] flex items-center justify-center text-white shadow-sm font-bold text-sm sm:text-base">
+                {settings?.siteName ? (
+                  settings.siteName.slice(0, 3).toUpperCase()
+                ) : (
+                  <Code2 className="w-8 h-8 sm:w-10 sm:h-10" />
+                )}
               </div>
             )}
           </Link>
