@@ -7,6 +7,22 @@ import { BlogPost } from '../models/BlogPost.js';
 import { Slider } from '../models/Slider.js';
 import { recordAudit } from '../services/auditService.js';
 
+export function getFullMediaUrl(req, relativeUrl) {
+  if (!relativeUrl) return '';
+  if (
+    relativeUrl.startsWith('http://') ||
+    relativeUrl.startsWith('https://') ||
+    relativeUrl.startsWith('data:') ||
+    relativeUrl.startsWith('blob:')
+  ) {
+    return relativeUrl;
+  }
+  const cleanPath = relativeUrl.startsWith('/') ? relativeUrl : `/${relativeUrl}`;
+  const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+  const host = req.headers['x-forwarded-host'] || req.get('host');
+  return `${protocol}://${host}${cleanPath}`;
+}
+
 export async function uploadMedia(req, res, next) {
   try {
     if (!req.files || req.files.length === 0) {
@@ -47,7 +63,10 @@ export async function uploadMedia(req, res, next) {
         altText: path.parse(originalName).name,
       });
 
-      createdAssets.push(asset);
+      createdAssets.push({
+        ...asset.toObject(),
+        url: getFullMediaUrl(req, asset.url),
+      });
 
       await recordAudit(req, {
         action: 'media.upload',
@@ -88,9 +107,17 @@ export async function listMedia(req, res, next) {
       MediaAsset.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
     ]);
 
+    const formattedAssets = assets.map((asset) => {
+      const doc = asset.toObject ? asset.toObject() : asset;
+      return {
+        ...doc,
+        url: getFullMediaUrl(req, doc.url),
+      };
+    });
+
     res.status(200).json({
       success: true,
-      data: assets,
+      data: formattedAssets,
       meta: {
         page,
         limit,
@@ -126,7 +153,14 @@ export async function updateMedia(req, res, next) {
       details: { altText: asset.altText },
     });
 
-    res.status(200).json({ success: true, data: asset });
+    const doc = asset.toObject ? asset.toObject() : asset;
+    res.status(200).json({
+      success: true,
+      data: {
+        ...doc,
+        url: getFullMediaUrl(req, doc.url),
+      },
+    });
   } catch (error) {
     next(error);
   }

@@ -1,3 +1,7 @@
+# Proxy uploads and API requests to backend Web Service
+/uploads/*  https://kbr-digital-api.onrender.com/uploads/:splat  200!
+/api/*      https://kbr-digital-api.onrender.com/api/:splat      200!
+
 # Admin CMS SPA deep-link rewrites
 /admin/*    /admin.html   200
 /admin      /admin.html   200
